@@ -12,6 +12,7 @@ const cellGap = 3;
 const gameGrid = [];
 const defenders = [];
 const enemies = [];
+const projectiles = [];
 const enemyPositions = [];
 let enemiesInterval = 600;
 let currentFrame = 0;
@@ -85,7 +86,6 @@ class Defender {
     this.height = cellSize;
     this.shooting = false;
     this.health = 100;
-    this.projectiles = [];
     this.timer = 0;
   }
 
@@ -111,7 +111,22 @@ canvas.addEventListener("click", () => {
 });
 
 function handleDefenders() {
-  for (let i = 0; i < defenders.length; i++) defenders[i].draw();
+  for (let i = 0; i < defenders.length; i++) {
+    const defender = defenders[i];
+    defender.draw();
+    for (let j = 0; j < enemies.length; j++) {
+      const enemy = enemies[j];
+      if (isColliding(defender, enemy)) {
+        enemy.movement = 0;
+        defender.health -= 0.2;
+      }
+      if (defender.health <= 0) {
+        defenders.splice(i, 1);
+        i--;
+        enemy.movement = enemy.speed;
+      }
+    }
+  }
 }
 
 /***********************************************************
@@ -124,7 +139,7 @@ class Enemy {
     this.y = positionY;
     this.width = cellSize;
     this.height = cellSize;
-    this.speed = Math.random() * 0.2 + 0.4;
+    this.speed = Math.random() * 0.8 + 0.4;
     this.movement = this.speed;
     this.health = 100;
     this.maxHealth = this.health;
