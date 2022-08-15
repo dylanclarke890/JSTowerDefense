@@ -153,7 +153,17 @@ function handleProjectiles() {
  */
 
 class BaseUnit {
-  constructor(x, y, width, height, health, minFrame, maxFrame, spriteWidth, spriteHeight) {
+  constructor(
+    x,
+    y,
+    width,
+    height,
+    health,
+    minFrame,
+    maxFrame,
+    spriteWidth,
+    spriteHeight
+  ) {
     this.x = x;
     this.y = y;
     this.width = width;
@@ -166,6 +176,10 @@ class BaseUnit {
     this.maxFrame = maxFrame;
     this.spriteWidth = spriteWidth;
     this.spriteHeight = spriteHeight;
+  }
+
+  get unitHealth() {
+    return Math.floor(this.health);
   }
 }
 
@@ -233,7 +247,7 @@ class Defender extends BaseUnit {
     );
     ctx.fillStyle = "gold";
     ctx.font = "20px Arial";
-    ctx.fillText(Math.floor(this.health), this.x + 15, this.y + 30);
+    ctx.fillText(this.unitHealth, this.x + 15, this.y + 30);
   }
 }
 
@@ -317,7 +331,7 @@ class Enemy extends BaseUnit {
     // ctx.fillRect(this.x, this.y, this.width, this.height);
     ctx.fillStyle = "black";
     ctx.font = "20px Arial";
-    ctx.fillText(Math.floor(this.health), this.x + 15, this.y + 30);
+    ctx.fillText(this.unitHealth, this.x + 15, this.y + 30);
     ctx.drawImage(
       this.enemyType,
       this.frameX * this.spriteWidth,
