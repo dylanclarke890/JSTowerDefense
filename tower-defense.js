@@ -265,22 +265,20 @@ class Defender extends BaseUnit {
 
 function handleDefenders() {
   for (let i = 0; i < player.units.length; i++) {
-    player.units[i].update();
-    player.units[i].draw();
-    if (enemy.positions.indexOf(player.units[i].y) !== -1) {
-      player.units[i].shooting = true;
-    } else {
-      player.units[i].shooting = false;
-    }
+    const unit = player.units[i];
+    unit.update();
+    unit.draw();
+    unit.shooting = enemy.positions.indexOf(unit.y) !== -1;
     for (let j = 0; j < enemy.units.length; j++) {
-      if (player.units[i] && isColliding(player.units[i], enemy.units[j])) {
-        enemy.units[j].movement = 0;
-        player.units[i].health -= 0.5;
+      const enemyUnit = enemy.units[j];
+      if (unit && isColliding(unit, enemyUnit)) {
+        unit.health -= 0.5;
+        enemyUnit.movement = 0;
       }
-      if (player.units[i] && player.units[i].health <= 0) {
+      if (unit && unit.health <= 0) {
         player.units.splice(i, 1);
         i--;
-        enemy.units[j].movement = enemy.units[j].speed;
+        enemyUnit.movement = enemyUnit.speed;
       }
     }
   }
@@ -345,26 +343,21 @@ class Enemy extends BaseUnit {
 
 function handleEnemies() {
   for (let i = 0; i < enemy.units.length; i++) {
-    enemy.units[i].update();
-    enemy.units[i].draw();
-    if (enemy.units[i] && enemy.units[i].x < 0) gameState.over = true;
-    if (enemy.units[i] && enemy.units[i].health <= 0) {
-      const resourcesGained = enemy.units[i].maxHealth / 10;
+    const unit = enemy.units[i];
+    unit.update();
+    unit.draw();
+    if (unit && unit.x < 0) gameState.over = true;
+    if (unit && unit.health <= 0) {
+      const resourcesGained = unit.maxHealth / 10;
       gameState.messages.push(
         new FloatingMessage(`+${resourcesGained}`, 250, 50, 30, "gold")
       );
       gameState.messages.push(
-        new FloatingMessage(
-          `+${resourcesGained}`,
-          enemy.units[i].x,
-          enemy.units[i].y,
-          30,
-          "black"
-        )
+        new FloatingMessage(`+${resourcesGained}`, unit.x, unit.y, 30, "black")
       );
       player.resources += resourcesGained;
       player.score += resourcesGained;
-      enemy.positions.splice(enemy.positions.indexOf(enemy.units[i].y), 1);
+      enemy.positions.splice(enemy.positions.indexOf(unit.y), 1);
       enemy.units.splice(i, 1);
       i--;
     }
