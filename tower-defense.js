@@ -154,6 +154,7 @@ function handleProjectiles() {
 
 class BaseUnit {
   constructor(
+    type,
     x,
     y,
     width,
@@ -164,6 +165,7 @@ class BaseUnit {
     spriteWidth,
     spriteHeight
   ) {
+    this.type = type;
     this.x = x;
     this.y = y;
     this.width = width;
@@ -180,6 +182,31 @@ class BaseUnit {
 
   get unitHealth() {
     return Math.floor(this.health);
+  }
+
+  nextSpriteFrame() {
+    if (this.frameX < this.maxFrame) this.frameX++;
+    else this.frameX = this.minFrame;
+  }
+
+  drawHP(fillStyle, font, x, y) {
+    ctx.fillStyle = fillStyle;
+    ctx.font = font;
+    ctx.fillText(this.unitHealth, x, y);
+  }
+
+  drawSprite() {
+    ctx.drawImage(
+      this.type.image,
+      this.frameX * this.spriteWidth,
+      0,
+      this.spriteWidth,
+      this.spriteHeight,
+      this.x,
+      this.y,
+      this.width,
+      this.height
+    );
   }
 }
 
@@ -212,17 +239,16 @@ class Defender extends BaseUnit {
   constructor(x, y) {
     const width = board.cell.size - board.cell.gap * 2;
     const height = board.cell.size - board.cell.gap * 2;
-    super(x, y, width, height, 100, 0, 1, 167, 256);
+    const type = defenderTypes[player.selectedUnit];
+    super(type, x, y, width, height, 100, 0, 1, 167, 256);
     this.shooting = false;
     this.shootNow = false;
     this.timer = 0;
-    this.typeIndex = player.selectedUnit;
   }
 
   update() {
     if (gameState.frame % 8 === 0) {
-      if (this.frameX < this.maxFrame) this.frameX++;
-      else this.frameX = this.minFrame;
+      this.nextSpriteFrame();
       if (this.frameX === 1) this.shootNow = true;
     }
     if (this.shooting && this.shootNow) {
@@ -232,22 +258,8 @@ class Defender extends BaseUnit {
   }
 
   draw() {
-    // ctx.fillStyle = "blue";
-    // ctx.fillRect(this.x, this.y, this.width, this.height);
-    ctx.drawImage(
-      defenderTypes[this.typeIndex].image,
-      this.frameX * this.spriteWidth,
-      0,
-      this.spriteWidth,
-      this.spriteHeight,
-      this.x,
-      this.y,
-      this.width,
-      this.height
-    );
-    ctx.fillStyle = "gold";
-    ctx.font = "20px Arial";
-    ctx.fillText(this.unitHealth, this.x + 15, this.y + 30);
+    this.drawSprite();
+    this.drawHP("gold", "20px Arial", this.x + 15, this.y + 30);
   }
 }
 
@@ -306,43 +318,28 @@ function chooseDefender() {
  */
 const zombie = new Image();
 zombie.src = "sprites/zombie.png";
-const enemyTypes = [zombie];
+const enemyTypes = [{ image: zombie }];
 
 class Enemy extends BaseUnit {
   constructor(yPos) {
+    const type = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
     const width = board.cell.size - board.cell.gap * 2;
     const height = board.cell.size - board.cell.gap * 2;
-    super(canvas.width, yPos, width, height, 100, 0, 7, 290, 420);
+    super(type, canvas.width, yPos, width, height, 100, 0, 7, 290, 420);
     this.speed = Math.random() * 0.8 + 0.4;
     this.movement = this.speed;
-    this.enemyType = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
   }
 
   update() {
     this.x -= this.movement;
     if (gameState.frame % 2 === 0) {
-      if (this.frameX < this.maxFrame) this.frameX++;
-      else this.frameX = this.minFrame;
+      this.nextSpriteFrame();
     }
   }
 
   draw() {
-    // ctx.fillStyle = "red";
-    // ctx.fillRect(this.x, this.y, this.width, this.height);
-    ctx.fillStyle = "black";
-    ctx.font = "20px Arial";
-    ctx.fillText(this.unitHealth, this.x + 15, this.y + 30);
-    ctx.drawImage(
-      this.enemyType,
-      this.frameX * this.spriteWidth,
-      0,
-      this.spriteWidth,
-      this.spriteHeight,
-      this.x,
-      this.y,
-      this.width,
-      this.height
-    );
+    this.drawHP("black", "20px Arial", this.x + 15, this.y + 30);
+    this.drawSprite();
   }
 }
 
