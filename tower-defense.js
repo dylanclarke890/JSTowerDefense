@@ -16,7 +16,7 @@ const player = {
 };
 
 const enemy = {
-  frequency: 600, // how often in frames to spawn a new enemy
+  frequency: 600, // how often in frames to spawn a new enemy.
   positions: [],
   units: [],
 };
@@ -405,9 +405,10 @@ class FloatingMessage {
 
 function handleFloatingMessages() {
   for (let i = 0; i < gameState.messages.length; i++) {
-    gameState.messages[i].update();
-    gameState.messages[i].draw();
-    if (gameState.messages[i].lifeSpan > 50) {
+    const message = gameState.messages[i];
+    message.update();
+    message.draw();
+    if (message.lifeSpan > 50) {
       gameState.messages.splice(i, 1);
       i--;
     }
@@ -443,31 +444,21 @@ function handleResources() {
     gameState.pickups.push(new Resource());
   }
   for (let i = 0; i < gameState.pickups.length; i++) {
-    gameState.pickups[i].draw();
-    if (
-      gameState.pickups[i] &&
-      mouse.x &&
-      mouse.y &&
-      isColliding(gameState.pickups[i], mouse)
-    ) {
-      player.resources += gameState.pickups[i].amount;
+    const pickup = gameState.pickups[i];
+    pickup.draw();
+    if (pickup && mouse.x && mouse.y && isColliding(pickup, mouse)) {
+      player.resources += pickup.amount;
       gameState.messages.push(
         new FloatingMessage(
-          `+${gameState.pickups[i].amount}`,
-          gameState.pickups[i].x,
-          gameState.pickups[i].y,
+          `+${pickup.amount}`,
+          pickup.x,
+          pickup.y,
           30,
           "black"
         )
       );
       gameState.messages.push(
-        new FloatingMessage(
-          `+${gameState.pickups[i].amount}`,
-          250,
-          50,
-          30,
-          "gold"
-        )
+        new FloatingMessage(`+${pickup.amount}`, 250, 50, 30, "gold")
       );
       gameState.pickups.splice(i, 1);
       i--;
