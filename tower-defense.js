@@ -119,7 +119,39 @@ const mouse = {
   clicked: false,
 };
 
+const actionBar = {
+  width: canvas.width,
+  height: board.cell.size,
+};
+
 let canvasPosition = canvas.getBoundingClientRect();
+
+const plant = new Image();
+plant.src = "sprites/plant.png";
+const defenderTypes = [
+  {
+    x: 10,
+    y: 10,
+    width: 70,
+    height: 85,
+    image: plant,
+  },
+  {
+    x: 90,
+    y: 10,
+    width: 70,
+    height: 85,
+    image: plant,
+  },
+];
+const idleUnitStroke = "black";
+const selectedUnitStroke = "gold";
+const amounts = [20, 30, 40];
+
+const zombie = new Image();
+zombie.src = "sprites/zombie.png";
+const enemyTypes = [{ image: zombie }];
+
 canvas.addEventListener("mousemove", (e) => {
   mouse.x = e.x - canvasPosition.left;
   mouse.y = e.y - canvasPosition.top;
@@ -138,11 +170,6 @@ canvas.addEventListener("mouseup", () => {
 /***********************************************************
  *              G A M E  B O A R D
  */
-
-const controlsBar = {
-  width: canvas.width,
-  height: board.cell.size,
-};
 
 class Cell extends BaseCanvasModel {
   constructor(x, y) {
@@ -220,27 +247,6 @@ function handleProjectiles() {
 /***********************************************************
  *              D E F E N D E R S
  */
-
-const plant = new Image();
-plant.src = "sprites/plant.png";
-const defenderTypes = [
-  {
-    x: 10,
-    y: 10,
-    width: 70,
-    height: 85,
-    image: plant,
-  },
-  {
-    x: 90,
-    y: 10,
-    width: 70,
-    height: 85,
-    image: plant,
-  },
-];
-const idleUnitStroke = "black";
-const selectedUnitStroke = "gold";
 
 class Defender extends BaseUnit {
   constructor(x, y) {
@@ -321,9 +327,6 @@ function chooseDefender() {
 /***********************************************************
  *              E N E M I E S
  */
-const zombie = new Image();
-zombie.src = "sprites/zombie.png";
-const enemyTypes = [{ image: zombie }];
 
 class Enemy extends BaseUnit {
   constructor(yPos) {
@@ -426,8 +429,6 @@ function handleFloatingMessages() {
  *              R E S O U R C E S
  */
 
-const amounts = [20, 30, 40];
-
 class Resource {
   constructor() {
     this.x = Math.random() * (canvas.width - board.cell.size);
@@ -519,7 +520,7 @@ function handleGameStatus() {
 (function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "blue";
-  ctx.fillRect(0, 0, controlsBar.width, controlsBar.height);
+  ctx.fillRect(0, 0, actionBar.width, actionBar.height);
   handleGameGrid();
   handleDefenders();
   handleResources();
