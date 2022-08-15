@@ -416,12 +416,14 @@ function handleFloatingMessages() {
  *              R E S O U R C E S
  */
 
-class Resource {
+class Resource extends BaseCanvasModel {
   constructor() {
-    this.x = randomUpTo(canvas.width - board.cell.size);
-    this.y = (randomUpTo(5, true) + 1) * (board.cell.size + 25);
-    this.width = board.cell.size * 0.6;
-    this.height = board.cell.size * 0.6;
+    super(
+      randomUpTo(canvas.width - board.cell.size),
+      (randomUpTo(5, true) + 1) * (board.cell.size + 25),
+      board.cell.size * 0.6,
+      board.cell.size * 0.6
+    );
     this.amount = amounts[randomUpTo(amounts.length, true)];
   }
 
