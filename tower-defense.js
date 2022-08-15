@@ -8,9 +8,11 @@ canvas.height = 600;
  */
 
 const player = {
+  projectiles: [],
   resources: 300,
   score: 0,
-  selectedUnit: 0,
+  selectedUnit: 0, // the index of the unit type to place next.
+  units: [],
 };
 
 const enemy = {
@@ -22,8 +24,6 @@ const enemy = {
 const cellSize = 100;
 const cellGap = 3;
 const gameGrid = [];
-const defenders = [];
-const projectiles = [];
 let currentFrame = 0;
 const resources = [];
 const floatingMessages = [];
@@ -115,24 +115,27 @@ class Projectile {
 }
 
 function handleProjectiles() {
-  for (let i = 0; i < projectiles.length; i++) {
-    projectiles[i].update();
-    projectiles[i].draw();
+  for (let i = 0; i < player.projectiles.length; i++) {
+    player.projectiles[i].update();
+    player.projectiles[i].draw();
 
     for (let j = 0; j < enemy.units.length; j++) {
       if (
         enemy.units[j] &&
-        projectiles[i] &&
-        isColliding(projectiles[i], enemy.units[j])
+        player.projectiles[i] &&
+        isColliding(player.projectiles[i], enemy.units[j])
       ) {
-        enemy.units[j].health -= projectiles[i].power;
-        projectiles.splice(i, 1);
+        enemy.units[j].health -= player.projectiles[i].power;
+        player.projectiles.splice(i, 1);
         i--;
       }
     }
 
-    if (projectiles[i] && projectiles[i].x > canvas.width - cellSize) {
-      projectiles.splice(i, 1);
+    if (
+      player.projectiles[i] &&
+      player.projectiles[i].x > canvas.width - cellSize
+    ) {
+      player.projectiles.splice(i, 1);
       i--;
     }
   }
@@ -189,7 +192,7 @@ class Defender {
       if (this.frameX === 1) this.shootNow = true;
     }
     if (this.shooting && this.shootNow) {
-      projectiles.push(new Projectile(this.x + 70, this.y + 50));
+      player.projectiles.push(new Projectile(this.x + 70, this.y + 50));
       this.shootNow = false;
     }
   }
@@ -215,21 +218,21 @@ class Defender {
 }
 
 function handleDefenders() {
-  for (let i = 0; i < defenders.length; i++) {
-    defenders[i].update();
-    defenders[i].draw();
-    if (enemy.positions.indexOf(defenders[i].y) !== -1) {
-      defenders[i].shooting = true;
+  for (let i = 0; i < player.units.length; i++) {
+    player.units[i].update();
+    player.units[i].draw();
+    if (enemy.positions.indexOf(player.units[i].y) !== -1) {
+      player.units[i].shooting = true;
     } else {
-      defenders[i].shooting = false;
+      player.units[i].shooting = false;
     }
     for (let j = 0; j < enemy.units.length; j++) {
-      if (defenders[i] && isColliding(defenders[i], enemy.units[j])) {
+      if (player.units[i] && isColliding(player.units[i], enemy.units[j])) {
         enemy.units[j].movement = 0;
-        defenders[i].health -= 0.5;
+        player.units[i].health -= 0.5;
       }
-      if (defenders[i] && defenders[i].health <= 0) {
-        defenders.splice(i, 1);
+      if (player.units[i] && player.units[i].health <= 0) {
+        player.units.splice(i, 1);
         i--;
         enemy.units[j].movement = enemy.units[j].speed;
       }
@@ -458,10 +461,10 @@ canvas.addEventListener("click", () => {
   const gridX = mouse.x - (mouse.x % cellSize) + cellGap;
   const gridY = mouse.y - (mouse.y % cellSize) + cellGap;
   if (gridY < cellSize) return;
-  if (defenders.some((def) => def.x === gridX && def.y === gridY)) return;
+  if (player.units.some((def) => def.x === gridX && def.y === gridY)) return;
   let defenderCost = 100;
   if (defenderCost <= player.resources) {
-    defenders.push(new Defender(gridX, gridY));
+    player.units.push(new Defender(gridX, gridY));
     player.resources -= defenderCost;
   } else {
     floatingMessages.push(
