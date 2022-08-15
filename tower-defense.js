@@ -375,11 +375,10 @@ function handleEnemies() {
 /***********************************************************
  *              F L O A T I N G  M E S S A G E S
  */
-class FloatingMessage {
+class FloatingMessage extends BaseCanvasModel {
   constructor(value, x, y, size, color) {
+    super(x, y, null, null); // keep things consistent
     this.value = value;
-    this.x = x;
-    this.y = y;
     this.size = size;
     this.lifeSpan = 0;
     this.color = color;
