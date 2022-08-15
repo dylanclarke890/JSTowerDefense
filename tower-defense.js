@@ -7,6 +7,12 @@ canvas.height = 600;
  *              G L O B A L  V A R I A B L E S
  */
 
+const player = {
+  resources: 300,
+  selectedUnit: 0,
+  score: 0,
+};
+
 const cellSize = 100;
 const cellGap = 3;
 const gameGrid = [];
@@ -18,11 +24,9 @@ let enemiesInterval = 600;
 let currentFrame = 0;
 const resources = [];
 const floatingMessages = [];
-let playerResources = 300;
 let score = 0;
 const winningScore = 50;
 let gameOver = false;
-let chosenDefender = 0;
 
 const mouse = {
   x: 10,
@@ -167,7 +171,7 @@ class Defender {
     this.shootNow = false;
     this.health = 100;
     this.timer = 0;
-    this.typeIndex = chosenDefender;
+    this.typeIndex = player.selectedUnit;
     this.frameX = 0;
     this.frameY = 0;
     this.minFrame = 0;
@@ -248,11 +252,11 @@ function chooseDefender() {
       this.width,
       this.height
     );
-    if (isColliding(mouse, uc) && mouse.clicked) chosenDefender = i;
+    if (isColliding(mouse, uc) && mouse.clicked) player.selectedUnit = i;
     ctx.fillRect(uc.x, uc.y, uc.width, uc.height);
     ctx.drawImage(uc.image, 0, 0, 167, 256, currentX, currentY, 50, 80);
     ctx.strokeStyle =
-      chosenDefender === i ? selectedUnitStroke : idleUnitStroke;
+      player.selectedUnit === i ? selectedUnitStroke : idleUnitStroke;
     ctx.strokeRect(uc.x, uc.y, uc.width, uc.height);
     currentX += 80;
   });
@@ -330,14 +334,14 @@ function handleEnemies() {
           "black"
         )
       );
-      playerResources += resourcesGained;
-      score += resourcesGained;
+      player.resources += resourcesGained;
+      player.score += resourcesGained;
       enemyPositions.splice(enemyPositions.indexOf(enemies[i].y), 1);
       enemies.splice(i, 1);
       i--;
     }
   }
-  if (currentFrame % enemiesInterval === 0 && score < winningScore) {
+  if (currentFrame % enemiesInterval === 0 && player.score < winningScore) {
     let yPos = Math.floor(Math.random() * 5 + 1) * cellSize + cellGap;
     enemyPositions.push(yPos);
     enemies.push(new Enemy(yPos));
@@ -410,7 +414,7 @@ class Resource {
 }
 
 function handleResources() {
-  if (currentFrame % 500 === 0 && score < winningScore) {
+  if (currentFrame % 500 === 0 && player.score < winningScore) {
     resources.push(new Resource());
   }
   for (let i = 0; i < resources.length; i++) {
@@ -421,7 +425,7 @@ function handleResources() {
       mouse.y &&
       isColliding(resources[i], mouse)
     ) {
-      playerResources += resources[i].amount;
+      player.resources += resources[i].amount;
       floatingMessages.push(
         new FloatingMessage(
           `+${resources[i].amount}`,
@@ -454,9 +458,9 @@ canvas.addEventListener("click", () => {
   if (gridY < cellSize) return;
   if (defenders.some((def) => def.x === gridX && def.y === gridY)) return;
   let defenderCost = 100;
-  if (defenderCost <= playerResources) {
+  if (defenderCost <= player.resources) {
     defenders.push(new Defender(gridX, gridY));
-    playerResources -= defenderCost;
+    player.resources -= defenderCost;
   } else {
     floatingMessages.push(
       new FloatingMessage("Missing resources", mouse.x, mouse.y, 20, "red")
@@ -467,19 +471,19 @@ canvas.addEventListener("click", () => {
 function handleGameStatus() {
   ctx.fillStyle = "gold";
   ctx.font = "30px Arial";
-  ctx.fillText(`Score: ${score}`, 180, 40);
-  ctx.fillText(`Resources: ${playerResources}`, 180, 80);
+  ctx.fillText(`Score: ${player.score}`, 180, 40);
+  ctx.fillText(`Resources: ${player.resources}`, 180, 80);
   if (gameOver) {
     ctx.fillStyle = "black";
     ctx.font = "90px Arial";
     ctx.fillText("GAME OVER", 125, 330);
   }
-  if (score >= winningScore && enemies.length === 0) {
+  if (player.score >= winningScore && enemies.length === 0) {
     ctx.fillStyle = "black";
     ctx.font = "60px Arial";
     ctx.fillText("LEVEL COMPLETE", 130, 300);
     ctx.font = "30px Arial";
-    ctx.fillText(`You win with ${score} points!`, 134, 340);
+    ctx.fillText(`You win with ${player.score} points!`, 134, 340);
   }
 }
 
