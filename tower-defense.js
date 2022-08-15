@@ -22,12 +22,14 @@ let playerResources = 300;
 let score = 0;
 const winningScore = 50;
 let gameOver = false;
+let chosenDefender = 0;
 
 const mouse = {
   x: 10,
   y: 10,
   width: 0.1,
   height: 0.1,
+  clicked: false,
 };
 let canvasPosition = canvas.getBoundingClientRect();
 canvas.addEventListener("mousemove", (e) => {
@@ -37,6 +39,12 @@ canvas.addEventListener("mousemove", (e) => {
 canvas.addEventListener("mouseleave", () => {
   mouse.x = undefined;
   mouse.y = undefined;
+});
+canvas.addEventListener("mousedown", () => {
+  mouse.clicked = true;
+});
+canvas.addEventListener("mouseup", () => {
+  mouse.clicked = false;
 });
 
 /***********************************************************
@@ -130,7 +138,24 @@ function handleProjectiles() {
 
 const plant = new Image();
 plant.src = "sprites/plant.png";
-const defenderTypes = [plant];
+const defenderTypes = [
+  {
+    x: 10,
+    y: 10,
+    width: 70,
+    height: 85,
+    image: plant,
+  },
+  {
+    x: 90,
+    y: 10,
+    width: 70,
+    height: 85,
+    image: plant,
+  },
+];
+const idleUnitStroke = "black";
+const selectedUnitStroke = "gold";
 
 class Defender {
   constructor(x, y) {
@@ -139,10 +164,10 @@ class Defender {
     this.width = cellSize - cellGap * 2;
     this.height = cellSize - cellGap * 2;
     this.shooting = false;
+    this.shootNow = false;
     this.health = 100;
     this.timer = 0;
-    this.defenderType =
-      defenderTypes[Math.floor(Math.random() * defenderTypes.length)];
+    this.typeIndex = chosenDefender;
     this.frameX = 0;
     this.frameY = 0;
     this.minFrame = 0;
@@ -155,23 +180,19 @@ class Defender {
     if (currentFrame % 8 === 0) {
       if (this.frameX < this.maxFrame) this.frameX++;
       else this.frameX = this.minFrame;
+      if (this.frameX === 1) this.shootNow = true;
     }
-    if (this.shooting) {
-      this.timer++;
-      if (this.timer % 100 === 0) {
-        projectiles.push(new Projectile(this.x + 70, this.y + 50));
-      }
-    } else this.timer = 0;
+    if (this.shooting && this.shootNow) {
+      projectiles.push(new Projectile(this.x + 70, this.y + 50));
+      this.shootNow = false;
+    }
   }
 
   draw() {
     // ctx.fillStyle = "blue";
     // ctx.fillRect(this.x, this.y, this.width, this.height);
-    ctx.fillStyle = "gold";
-    ctx.font = "20px Arial";
-    ctx.fillText(Math.floor(this.health), this.x + 15, this.y + 30);
     ctx.drawImage(
-      this.defenderType,
+      defenderTypes[this.typeIndex].image,
       this.frameX * this.spriteWidth,
       0,
       this.spriteWidth,
@@ -181,6 +202,9 @@ class Defender {
       this.width,
       this.height
     );
+    ctx.fillStyle = "gold";
+    ctx.font = "20px Arial";
+    ctx.fillText(Math.floor(this.health), this.x + 15, this.y + 30);
   }
 }
 
@@ -205,6 +229,33 @@ function handleDefenders() {
       }
     }
   }
+}
+
+function chooseDefender() {
+  ctx.lineWidth = 1;
+  ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+  let currentX = 20;
+  let currentY = 15;
+  defenderTypes.forEach((uc, i) => {
+    ctx.drawImage(
+      uc.image,
+      0,
+      0,
+      167,
+      256,
+      this.x,
+      this.y,
+      this.width,
+      this.height
+    );
+    if (isColliding(mouse, uc) && mouse.clicked) chosenDefender = i;
+    ctx.fillRect(uc.x, uc.y, uc.width, uc.height);
+    ctx.drawImage(uc.image, 0, 0, 167, 256, currentX, currentY, 50, 80);
+    ctx.strokeStyle =
+      chosenDefender === i ? selectedUnitStroke : idleUnitStroke;
+    ctx.strokeRect(uc.x, uc.y, uc.width, uc.height);
+    currentX += 80;
+  });
 }
 
 /***********************************************************
@@ -416,8 +467,8 @@ canvas.addEventListener("click", () => {
 function handleGameStatus() {
   ctx.fillStyle = "gold";
   ctx.font = "30px Arial";
-  ctx.fillText(`Score: ${score}`, 20, 40);
-  ctx.fillText(`Resources: ${playerResources}`, 20, 80);
+  ctx.fillText(`Score: ${score}`, 180, 40);
+  ctx.fillText(`Resources: ${playerResources}`, 180, 80);
   if (gameOver) {
     ctx.fillStyle = "black";
     ctx.font = "90px Arial";
@@ -441,8 +492,9 @@ function handleGameStatus() {
   handleResources();
   handleProjectiles();
   handleEnemies();
-  handleFloatingMessages();
+  chooseDefender();
   handleGameStatus();
+  handleFloatingMessages();
   currentFrame++;
   if (!gameOver) requestAnimationFrame(animate);
 })();
