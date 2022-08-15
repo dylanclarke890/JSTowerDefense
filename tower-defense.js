@@ -319,11 +319,11 @@ function chooseDefender() {
 
 class Enemy extends BaseUnit {
   constructor(yPos) {
-    const type = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
+    const type = enemyTypes[randomUpTo(enemyTypes.length, true)];
     const width = board.cell.size - board.cell.gap * 2;
     const height = board.cell.size - board.cell.gap * 2;
     super(type, canvas.width, yPos, width, height, 100, 0, 7, 290, 420);
-    this.speed = Math.random() * 0.8 + 0.4;
+    this.speed = randomUpTo(0.8) + 0.4;
     this.movement = this.speed;
   }
 
@@ -365,8 +365,7 @@ function handleEnemies() {
     gameState.frame % enemy.frequency === 0 &&
     player.score < gameState.winningScore
   ) {
-    let yPos =
-      Math.floor(Math.random() * 5 + 1) * board.cell.size + board.cell.gap;
+    let yPos = (randomUpTo(5, true) + 1) * board.cell.size + board.cell.gap;
     enemy.positions.push(yPos);
     enemy.units.push(new Enemy(yPos));
     if (enemy.frequency > 100) enemy.frequency -= 25;
@@ -420,11 +419,11 @@ function handleFloatingMessages() {
 
 class Resource {
   constructor() {
-    this.x = Math.random() * (canvas.width - board.cell.size);
-    this.y = (Math.floor(Math.random() * 5) + 1) * (board.cell.size + 25);
+    this.x = randomUpTo(canvas.width - board.cell.size);
+    this.y = (randomUpTo(5, true) + 1) * (board.cell.size + 25);
     this.width = board.cell.size * 0.6;
     this.height = board.cell.size * 0.6;
-    this.amount = amounts[Math.floor(Math.random() * amounts.length)];
+    this.amount = amounts[randomUpTo(amounts.length, true)];
   }
 
   draw() {
@@ -534,4 +533,9 @@ function isColliding(first, second) {
     return true;
   }
   return false;
+}
+
+function randomUpTo(num, floor = false) {
+  const res = Math.random() * num;
+  return floor ? Math.floor(res) : res;
 }
