@@ -23,15 +23,19 @@ const enemy = {
 
 const gameState = {
   frame: 0,
-  over: false,
-  winningScore: 50,
   messages: [],
+  over: false,
   pickups: [],
+  winningScore: 50,
 };
 
-const cellSize = 100;
-const cellGap = 3;
-const gameGrid = [];
+const board = {
+  cell: {
+    gap: 3,
+    size: 100,
+  },
+  grid: [],
+};
 
 const mouse = {
   x: 10,
@@ -62,15 +66,15 @@ canvas.addEventListener("mouseup", () => {
 
 const controlsBar = {
   width: canvas.width,
-  height: cellSize,
+  height: board.cell.size,
 };
 
 class Cell {
   constructor(x, y) {
     this.x = x;
     this.y = y;
-    this.width = cellSize;
-    this.height = cellSize;
+    this.width = board.cell.size;
+    this.height = board.cell.size;
   }
 
   draw() {
@@ -82,13 +86,13 @@ class Cell {
 }
 
 (function createGrid() {
-  for (let y = cellSize; y < canvas.height; y += cellSize)
-    for (let x = 0; x < canvas.width; x += cellSize)
-      gameGrid.push(new Cell(x, y));
+  for (let y = board.cell.size; y < canvas.height; y += board.cell.size)
+    for (let x = 0; x < canvas.width; x += board.cell.size)
+      board.grid.push(new Cell(x, y));
 })();
 
 function handleGameGrid() {
-  for (let i = 0; i < gameGrid.length; i++) gameGrid[i].draw();
+  for (let i = 0; i < board.grid.length; i++) board.grid[i].draw();
 }
 
 /***********************************************************
@@ -136,7 +140,7 @@ function handleProjectiles() {
 
     if (
       player.projectiles[i] &&
-      player.projectiles[i].x > canvas.width - cellSize
+      player.projectiles[i].x > canvas.width - board.cell.size
     ) {
       player.projectiles.splice(i, 1);
       i--;
@@ -173,8 +177,8 @@ class Defender {
   constructor(x, y) {
     this.x = x;
     this.y = y;
-    this.width = cellSize - cellGap * 2;
-    this.height = cellSize - cellGap * 2;
+    this.width = board.cell.size - board.cell.gap * 2;
+    this.height = board.cell.size - board.cell.gap * 2;
     this.shooting = false;
     this.shootNow = false;
     this.health = 100;
@@ -281,8 +285,8 @@ class Enemy {
   constructor(positionY) {
     this.x = canvas.width;
     this.y = positionY;
-    this.width = cellSize - cellGap * 2;
-    this.height = cellSize - cellGap * 2;
+    this.width = board.cell.size - board.cell.gap * 2;
+    this.height = board.cell.size - board.cell.gap * 2;
     this.speed = Math.random() * 0.8 + 0.4;
     this.movement = this.speed;
     this.health = 100;
@@ -353,7 +357,8 @@ function handleEnemies() {
     gameState.frame % enemy.frequency === 0 &&
     player.score < gameState.winningScore
   ) {
-    let yPos = Math.floor(Math.random() * 5 + 1) * cellSize + cellGap;
+    let yPos =
+      Math.floor(Math.random() * 5 + 1) * board.cell.size + board.cell.gap;
     enemy.positions.push(yPos);
     enemy.units.push(new Enemy(yPos));
     if (enemy.frequency > 100) enemy.frequency -= 25;
@@ -408,10 +413,10 @@ const amounts = [20, 30, 40];
 
 class Resource {
   constructor() {
-    this.x = Math.random() * (canvas.width - cellSize);
-    this.y = (Math.floor(Math.random() * 5) + 1) * (cellSize + 25);
-    this.width = cellSize * 0.6;
-    this.height = cellSize * 0.6;
+    this.x = Math.random() * (canvas.width - board.cell.size);
+    this.y = (Math.floor(Math.random() * 5) + 1) * (board.cell.size + 25);
+    this.width = board.cell.size * 0.6;
+    this.height = board.cell.size * 0.6;
     this.amount = amounts[Math.floor(Math.random() * amounts.length)];
   }
 
@@ -470,9 +475,9 @@ window.addEventListener("resize", () => {
 });
 
 canvas.addEventListener("click", () => {
-  const gridX = mouse.x - (mouse.x % cellSize) + cellGap;
-  const gridY = mouse.y - (mouse.y % cellSize) + cellGap;
-  if (gridY < cellSize) return;
+  const gridX = mouse.x - (mouse.x % board.cell.size) + board.cell.gap;
+  const gridY = mouse.y - (mouse.y % board.cell.size) + board.cell.gap;
+  if (gridY < board.cell.size) return;
   if (player.units.some((def) => def.x === gridX && def.y === gridY)) return;
   let defenderCost = 100;
   if (defenderCost <= player.resources) {
