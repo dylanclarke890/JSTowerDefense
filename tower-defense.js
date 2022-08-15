@@ -24,7 +24,6 @@ let enemiesInterval = 600;
 let currentFrame = 0;
 const resources = [];
 const floatingMessages = [];
-let score = 0;
 const winningScore = 50;
 let gameOver = false;
 
