@@ -149,6 +149,27 @@ function handleProjectiles() {
 }
 
 /***********************************************************
+ *              B A S E  C L A S S E S
+ */
+
+class BaseUnit {
+  constructor(x, y, width, height, health, minFrame, maxFrame, spriteWidth, spriteHeight) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.health = health;
+    this.maxHealth = health;
+    this.frameX = 0;
+    this.frameY = 0;
+    this.minFrame = minFrame;
+    this.maxFrame = maxFrame;
+    this.spriteWidth = spriteWidth;
+    this.spriteHeight = spriteHeight;
+  }
+}
+
+/***********************************************************
  *              D E F E N D E R S
  */
 
@@ -173,23 +194,15 @@ const defenderTypes = [
 const idleUnitStroke = "black";
 const selectedUnitStroke = "gold";
 
-class Defender {
+class Defender extends BaseUnit {
   constructor(x, y) {
-    this.x = x;
-    this.y = y;
-    this.width = board.cell.size - board.cell.gap * 2;
-    this.height = board.cell.size - board.cell.gap * 2;
+    const width = board.cell.size - board.cell.gap * 2;
+    const height = board.cell.size - board.cell.gap * 2;
+    super(x, y, width, height, 100, 0, 1, 167, 256);
     this.shooting = false;
     this.shootNow = false;
-    this.health = 100;
     this.timer = 0;
     this.typeIndex = player.selectedUnit;
-    this.frameX = 0;
-    this.frameY = 0;
-    this.minFrame = 0;
-    this.maxFrame = 1;
-    this.spriteWidth = 167;
-    this.spriteHeight = 256;
   }
 
   update() {
@@ -281,24 +294,16 @@ const zombie = new Image();
 zombie.src = "sprites/zombie.png";
 const enemyTypes = [zombie];
 
-class Enemy {
-  constructor(positionY) {
-    this.x = canvas.width;
-    this.y = positionY;
-    this.width = board.cell.size - board.cell.gap * 2;
-    this.height = board.cell.size - board.cell.gap * 2;
+class Enemy extends BaseUnit {
+  constructor(yPos) {
+    const width = board.cell.size - board.cell.gap * 2;
+    const height = board.cell.size - board.cell.gap * 2;
+    super(canvas.width, yPos, width, height, 100, 0, 7, 290, 420);
     this.speed = Math.random() * 0.8 + 0.4;
     this.movement = this.speed;
-    this.health = 100;
-    this.maxHealth = this.health;
     this.enemyType = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
-    this.frameX = 0;
-    this.frameY = 0;
-    this.minFrame = 0;
-    this.maxFrame = 7;
-    this.spriteWidth = 290;
-    this.spriteHeight = 420;
   }
+
   update() {
     this.x -= this.movement;
     if (gameState.frame % 2 === 0) {
