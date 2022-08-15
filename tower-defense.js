@@ -303,17 +303,6 @@ function chooseDefender() {
   let currentX = 20;
   let currentY = 15;
   defenderTypes.forEach((uc, i) => {
-    ctx.drawImage(
-      uc.image,
-      0,
-      0,
-      167,
-      256,
-      this.x,
-      this.y,
-      this.width,
-      this.height
-    );
     if (isColliding(mouse, uc) && mouse.clicked) player.selectedUnit = i;
     ctx.fillRect(uc.x, uc.y, uc.width, uc.height);
     ctx.drawImage(uc.image, 0, 0, 167, 256, currentX, currentY, 50, 80);
