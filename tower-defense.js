@@ -4,6 +4,80 @@ canvas.width = 900;
 canvas.height = 600;
 
 /***********************************************************
+ *              B A S E  C L A S S E S
+ */
+
+class BaseCanvasModel {
+  constructor(x, y, width, height) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+  }
+  update() {
+    throw new Error("method not implemented");
+  }
+  draw() {
+    throw new Error("method not implemented");
+  }
+}
+
+class BaseUnit extends BaseCanvasModel {
+  constructor(
+    type,
+    x,
+    y,
+    width,
+    height,
+    health,
+    minFrame,
+    maxFrame,
+    spriteWidth,
+    spriteHeight
+  ) {
+    super(x, y, width, height);
+    this.type = type;
+    this.health = health;
+    this.maxHealth = health;
+    this.frameX = 0;
+    this.frameY = 0;
+    this.minFrame = minFrame;
+    this.maxFrame = maxFrame;
+    this.spriteWidth = spriteWidth;
+    this.spriteHeight = spriteHeight;
+  }
+
+  get unitHealth() {
+    return Math.floor(this.health);
+  }
+
+  nextSpriteFrame() {
+    if (this.frameX < this.maxFrame) this.frameX++;
+    else this.frameX = this.minFrame;
+  }
+
+  drawHP(fillStyle, font, x, y) {
+    ctx.fillStyle = fillStyle;
+    ctx.font = font;
+    ctx.fillText(this.unitHealth, x, y);
+  }
+
+  drawSprite() {
+    ctx.drawImage(
+      this.type.image,
+      this.frameX * this.spriteWidth,
+      0,
+      this.spriteWidth,
+      this.spriteHeight,
+      this.x,
+      this.y,
+      this.width,
+      this.height
+    );
+  }
+}
+
+/***********************************************************
  *              G L O B A L  V A R I A B L E S
  */
 
@@ -44,6 +118,7 @@ const mouse = {
   height: 0.1,
   clicked: false,
 };
+
 let canvasPosition = canvas.getBoundingClientRect();
 canvas.addEventListener("mousemove", (e) => {
   mouse.x = e.x - canvasPosition.left;
@@ -69,12 +144,9 @@ const controlsBar = {
   height: board.cell.size,
 };
 
-class Cell {
+class Cell extends BaseCanvasModel {
   constructor(x, y) {
-    this.x = x;
-    this.y = y;
-    this.width = board.cell.size;
-    this.height = board.cell.size;
+    super(x, y, board.cell.size, board.cell.size);
   }
 
   draw() {
@@ -99,12 +171,9 @@ function handleGameGrid() {
  *              P R O J E C T I L E S
  */
 
-class Projectile {
+class Projectile extends BaseCanvasModel {
   constructor(x, y) {
-    this.x = x;
-    this.y = y;
-    this.width = 10;
-    this.height = 10;
+    super(x, y, 10, 10);
     this.power = 20;
     this.speed = 5;
   }
@@ -145,68 +214,6 @@ function handleProjectiles() {
       player.projectiles.splice(i, 1);
       i--;
     }
-  }
-}
-
-/***********************************************************
- *              B A S E  C L A S S E S
- */
-
-class BaseUnit {
-  constructor(
-    type,
-    x,
-    y,
-    width,
-    height,
-    health,
-    minFrame,
-    maxFrame,
-    spriteWidth,
-    spriteHeight
-  ) {
-    this.type = type;
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-    this.health = health;
-    this.maxHealth = health;
-    this.frameX = 0;
-    this.frameY = 0;
-    this.minFrame = minFrame;
-    this.maxFrame = maxFrame;
-    this.spriteWidth = spriteWidth;
-    this.spriteHeight = spriteHeight;
-  }
-
-  get unitHealth() {
-    return Math.floor(this.health);
-  }
-
-  nextSpriteFrame() {
-    if (this.frameX < this.maxFrame) this.frameX++;
-    else this.frameX = this.minFrame;
-  }
-
-  drawHP(fillStyle, font, x, y) {
-    ctx.fillStyle = fillStyle;
-    ctx.font = font;
-    ctx.fillText(this.unitHealth, x, y);
-  }
-
-  drawSprite() {
-    ctx.drawImage(
-      this.type.image,
-      this.frameX * this.spriteWidth,
-      0,
-      this.spriteWidth,
-      this.spriteHeight,
-      this.x,
-      this.y,
-      this.width,
-      this.height
-    );
   }
 }
 
