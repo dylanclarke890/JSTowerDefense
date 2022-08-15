@@ -21,14 +21,17 @@ const enemy = {
   units: [],
 };
 
+const gameState = {
+  frame: 0,
+  over: false,
+  winningScore: 50,
+  messages: [],
+  pickups: [],
+};
+
 const cellSize = 100;
 const cellGap = 3;
 const gameGrid = [];
-let currentFrame = 0;
-const resources = [];
-const floatingMessages = [];
-const winningScore = 50;
-let gameOver = false;
 
 const mouse = {
   x: 10,
@@ -186,7 +189,7 @@ class Defender {
   }
 
   update() {
-    if (currentFrame % 8 === 0) {
+    if (gameState.frame % 8 === 0) {
       if (this.frameX < this.maxFrame) this.frameX++;
       else this.frameX = this.minFrame;
       if (this.frameX === 1) this.shootNow = true;
@@ -294,7 +297,7 @@ class Enemy {
   }
   update() {
     this.x -= this.movement;
-    if (currentFrame % 2 === 0) {
+    if (gameState.frame % 2 === 0) {
       if (this.frameX < this.maxFrame) this.frameX++;
       else this.frameX = this.minFrame;
     }
@@ -324,13 +327,13 @@ function handleEnemies() {
   for (let i = 0; i < enemy.units.length; i++) {
     enemy.units[i].update();
     enemy.units[i].draw();
-    if (enemy.units[i] && enemy.units[i].x < 0) gameOver = true;
+    if (enemy.units[i] && enemy.units[i].x < 0) gameState.over = true;
     if (enemy.units[i] && enemy.units[i].health <= 0) {
       const resourcesGained = enemy.units[i].maxHealth / 10;
-      floatingMessages.push(
+      gameState.messages.push(
         new FloatingMessage(`+${resourcesGained}`, 250, 50, 30, "gold")
       );
-      floatingMessages.push(
+      gameState.messages.push(
         new FloatingMessage(
           `+${resourcesGained}`,
           enemy.units[i].x,
@@ -346,7 +349,10 @@ function handleEnemies() {
       i--;
     }
   }
-  if (currentFrame % enemy.frequency === 0 && player.score < winningScore) {
+  if (
+    gameState.frame % enemy.frequency === 0 &&
+    player.score < gameState.winningScore
+  ) {
     let yPos = Math.floor(Math.random() * 5 + 1) * cellSize + cellGap;
     enemy.positions.push(yPos);
     enemy.units.push(new Enemy(yPos));
@@ -384,11 +390,11 @@ class FloatingMessage {
 }
 
 function handleFloatingMessages() {
-  for (let i = 0; i < floatingMessages.length; i++) {
-    floatingMessages[i].update();
-    floatingMessages[i].draw();
-    if (floatingMessages[i].lifeSpan > 50) {
-      floatingMessages.splice(i, 1);
+  for (let i = 0; i < gameState.messages.length; i++) {
+    gameState.messages[i].update();
+    gameState.messages[i].draw();
+    if (gameState.messages[i].lifeSpan > 50) {
+      gameState.messages.splice(i, 1);
       i--;
     }
   }
@@ -419,31 +425,37 @@ class Resource {
 }
 
 function handleResources() {
-  if (currentFrame % 500 === 0 && player.score < winningScore) {
-    resources.push(new Resource());
+  if (gameState.frame % 500 === 0 && player.score < gameState.winningScore) {
+    gameState.pickups.push(new Resource());
   }
-  for (let i = 0; i < resources.length; i++) {
-    resources[i].draw();
+  for (let i = 0; i < gameState.pickups.length; i++) {
+    gameState.pickups[i].draw();
     if (
-      resources[i] &&
+      gameState.pickups[i] &&
       mouse.x &&
       mouse.y &&
-      isColliding(resources[i], mouse)
+      isColliding(gameState.pickups[i], mouse)
     ) {
-      player.resources += resources[i].amount;
-      floatingMessages.push(
+      player.resources += gameState.pickups[i].amount;
+      gameState.messages.push(
         new FloatingMessage(
-          `+${resources[i].amount}`,
-          resources[i].x,
-          resources[i].y,
+          `+${gameState.pickups[i].amount}`,
+          gameState.pickups[i].x,
+          gameState.pickups[i].y,
           30,
           "black"
         )
       );
-      floatingMessages.push(
-        new FloatingMessage(`+${resources[i].amount}`, 250, 50, 30, "gold")
+      gameState.messages.push(
+        new FloatingMessage(
+          `+${gameState.pickups[i].amount}`,
+          250,
+          50,
+          30,
+          "gold"
+        )
       );
-      resources.splice(i, 1);
+      gameState.pickups.splice(i, 1);
       i--;
     }
   }
@@ -467,7 +479,7 @@ canvas.addEventListener("click", () => {
     player.units.push(new Defender(gridX, gridY));
     player.resources -= defenderCost;
   } else {
-    floatingMessages.push(
+    gameState.messages.push(
       new FloatingMessage("Missing resources", mouse.x, mouse.y, 20, "red")
     );
   }
@@ -478,12 +490,12 @@ function handleGameStatus() {
   ctx.font = "30px Arial";
   ctx.fillText(`Score: ${player.score}`, 180, 40);
   ctx.fillText(`Resources: ${player.resources}`, 180, 80);
-  if (gameOver) {
+  if (gameState.over) {
     ctx.fillStyle = "black";
     ctx.font = "90px Arial";
     ctx.fillText("GAME OVER", 125, 330);
   }
-  if (player.score >= winningScore && enemy.units.length === 0) {
+  if (player.score >= gameState.winningScore && enemy.units.length === 0) {
     ctx.fillStyle = "black";
     ctx.font = "60px Arial";
     ctx.fillText("LEVEL COMPLETE", 130, 300);
@@ -504,8 +516,8 @@ function handleGameStatus() {
   chooseDefender();
   handleGameStatus();
   handleFloatingMessages();
-  currentFrame++;
-  if (!gameOver) requestAnimationFrame(animate);
+  gameState.frame++;
+  if (!gameState.over) requestAnimationFrame(animate);
 })();
 
 function isColliding(first, second) {
