@@ -147,18 +147,18 @@ const mouse = {
 };
 
 const actionBar = {
+  canvasPosition: canvas.getBoundingClientRect(),
   width: canvas.width,
   height: board.cell.size,
+  unitStrokes: {
+    normal: "black",
+    selected: "gold",
+  },
 };
 
-let canvasPosition = canvas.getBoundingClientRect();
-
-const idleUnitStroke = "black";
-const selectedUnitStroke = "gold";
-
 canvas.addEventListener("mousemove", (e) => {
-  mouse.x = e.x - canvasPosition.left;
-  mouse.y = e.y - canvasPosition.top;
+  mouse.x = e.x - actionBar.canvasPosition.left;
+  mouse.y = e.y - actionBar.canvasPosition.top;
 });
 canvas.addEventListener("mouseleave", () => {
   mouse.x = undefined;
@@ -310,8 +310,9 @@ function chooseDefender() {
     if (isColliding(mouse, uc) && mouse.clicked) player.selectedUnit = i;
     ctx.fillRect(uc.x, uc.y, uc.width, uc.height);
     ctx.drawImage(uc.image, 0, 0, 167, 256, currentX, currentY, 50, 80);
+    const strokes = actionBar.unitStrokes;
     ctx.strokeStyle =
-      player.selectedUnit === i ? selectedUnitStroke : idleUnitStroke;
+      player.selectedUnit === i ? strokes.selected : strokes.normal;
     ctx.strokeRect(uc.x, uc.y, uc.width, uc.height);
     currentX += 80;
   });
@@ -473,7 +474,7 @@ function handleResources() {
  */
 
 window.addEventListener("resize", () => {
-  canvasPosition = canvas.getBoundingClientRect();
+  actionBar.canvasPosition = canvas.getBoundingClientRect();
 });
 
 canvas.addEventListener("click", () => {
