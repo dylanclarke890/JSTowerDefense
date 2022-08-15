@@ -103,12 +103,39 @@ const gameState = {
   winningScore: 50,
 };
 
+const plant = new Image();
+plant.src = "sprites/plant.png";
+const zombie = new Image();
+zombie.src = "sprites/zombie.png";
+
 const board = {
   cell: {
     gap: 3,
     size: 100,
   },
   grid: [],
+  resources: {
+    amounts: [20, 30, 40],
+  },
+  units: {
+    player: [
+      {
+        x: 10,
+        y: 10,
+        width: 70,
+        height: 85,
+        image: plant,
+      },
+      {
+        x: 90,
+        y: 10,
+        width: 70,
+        height: 85,
+        image: plant,
+      },
+    ],
+    enemy: [{ image: zombie }],
+  },
 };
 
 const mouse = {
@@ -126,31 +153,8 @@ const actionBar = {
 
 let canvasPosition = canvas.getBoundingClientRect();
 
-const plant = new Image();
-plant.src = "sprites/plant.png";
-const defenderTypes = [
-  {
-    x: 10,
-    y: 10,
-    width: 70,
-    height: 85,
-    image: plant,
-  },
-  {
-    x: 90,
-    y: 10,
-    width: 70,
-    height: 85,
-    image: plant,
-  },
-];
 const idleUnitStroke = "black";
 const selectedUnitStroke = "gold";
-const amounts = [20, 30, 40];
-
-const zombie = new Image();
-zombie.src = "sprites/zombie.png";
-const enemyTypes = [{ image: zombie }];
 
 canvas.addEventListener("mousemove", (e) => {
   mouse.x = e.x - canvasPosition.left;
@@ -252,7 +256,7 @@ class Defender extends BaseUnit {
   constructor(x, y) {
     const width = board.cell.size - board.cell.gap * 2;
     const height = board.cell.size - board.cell.gap * 2;
-    const type = defenderTypes[player.selectedUnit];
+    const type = board.units.player[player.selectedUnit];
     super(type, x, y, width, height, 100, 0, 1, 167, 256);
     this.shooting = false;
     this.shootNow = false;
@@ -302,7 +306,7 @@ function chooseDefender() {
   ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
   let currentX = 20;
   let currentY = 15;
-  defenderTypes.forEach((uc, i) => {
+  board.units.player.forEach((uc, i) => {
     if (isColliding(mouse, uc) && mouse.clicked) player.selectedUnit = i;
     ctx.fillRect(uc.x, uc.y, uc.width, uc.height);
     ctx.drawImage(uc.image, 0, 0, 167, 256, currentX, currentY, 50, 80);
@@ -319,7 +323,7 @@ function chooseDefender() {
 
 class Enemy extends BaseUnit {
   constructor(yPos) {
-    const type = enemyTypes[randomUpTo(enemyTypes.length, true)];
+    const type = board.units.enemy[randomUpTo(board.units.enemy.length, true)];
     const width = board.cell.size - board.cell.gap * 2;
     const height = board.cell.size - board.cell.gap * 2;
     super(type, canvas.width, yPos, width, height, 100, 0, 7, 290, 420);
@@ -424,6 +428,7 @@ class Resource extends BaseCanvasModel {
       board.cell.size * 0.6,
       board.cell.size * 0.6
     );
+    const amounts = board.resources.amounts;
     this.amount = amounts[randomUpTo(amounts.length, true)];
   }
 
