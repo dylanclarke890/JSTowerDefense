@@ -9,18 +9,21 @@ canvas.height = 600;
 
 const player = {
   resources: 300,
-  selectedUnit: 0,
   score: 0,
+  selectedUnit: 0,
+};
+
+const enemy = {
+  frequency: 600, // how often in frames to spawn a new enemy
+  positions: [],
+  units: [],
 };
 
 const cellSize = 100;
 const cellGap = 3;
 const gameGrid = [];
 const defenders = [];
-const enemies = [];
 const projectiles = [];
-const enemyPositions = [];
-let enemiesInterval = 600;
 let currentFrame = 0;
 const resources = [];
 const floatingMessages = [];
@@ -116,13 +119,13 @@ function handleProjectiles() {
     projectiles[i].update();
     projectiles[i].draw();
 
-    for (let j = 0; j < enemies.length; j++) {
+    for (let j = 0; j < enemy.units.length; j++) {
       if (
-        enemies[j] &&
+        enemy.units[j] &&
         projectiles[i] &&
-        isColliding(projectiles[i], enemies[j])
+        isColliding(projectiles[i], enemy.units[j])
       ) {
-        enemies[j].health -= projectiles[i].power;
+        enemy.units[j].health -= projectiles[i].power;
         projectiles.splice(i, 1);
         i--;
       }
@@ -215,20 +218,20 @@ function handleDefenders() {
   for (let i = 0; i < defenders.length; i++) {
     defenders[i].update();
     defenders[i].draw();
-    if (enemyPositions.indexOf(defenders[i].y) !== -1) {
+    if (enemy.positions.indexOf(defenders[i].y) !== -1) {
       defenders[i].shooting = true;
     } else {
       defenders[i].shooting = false;
     }
-    for (let j = 0; j < enemies.length; j++) {
-      if (defenders[i] && isColliding(defenders[i], enemies[j])) {
-        enemies[j].movement = 0;
+    for (let j = 0; j < enemy.units.length; j++) {
+      if (defenders[i] && isColliding(defenders[i], enemy.units[j])) {
+        enemy.units[j].movement = 0;
         defenders[i].health -= 0.5;
       }
       if (defenders[i] && defenders[i].health <= 0) {
         defenders.splice(i, 1);
         i--;
-        enemies[j].movement = enemies[j].speed;
+        enemy.units[j].movement = enemy.units[j].speed;
       }
     }
   }
@@ -315,36 +318,36 @@ class Enemy {
 }
 
 function handleEnemies() {
-  for (let i = 0; i < enemies.length; i++) {
-    enemies[i].update();
-    enemies[i].draw();
-    if (enemies[i] && enemies[i].x < 0) gameOver = true;
-    if (enemies[i] && enemies[i].health <= 0) {
-      const resourcesGained = enemies[i].maxHealth / 10;
+  for (let i = 0; i < enemy.units.length; i++) {
+    enemy.units[i].update();
+    enemy.units[i].draw();
+    if (enemy.units[i] && enemy.units[i].x < 0) gameOver = true;
+    if (enemy.units[i] && enemy.units[i].health <= 0) {
+      const resourcesGained = enemy.units[i].maxHealth / 10;
       floatingMessages.push(
         new FloatingMessage(`+${resourcesGained}`, 250, 50, 30, "gold")
       );
       floatingMessages.push(
         new FloatingMessage(
           `+${resourcesGained}`,
-          enemies[i].x,
-          enemies[i].y,
+          enemy.units[i].x,
+          enemy.units[i].y,
           30,
           "black"
         )
       );
       player.resources += resourcesGained;
       player.score += resourcesGained;
-      enemyPositions.splice(enemyPositions.indexOf(enemies[i].y), 1);
-      enemies.splice(i, 1);
+      enemy.positions.splice(enemy.positions.indexOf(enemy.units[i].y), 1);
+      enemy.units.splice(i, 1);
       i--;
     }
   }
-  if (currentFrame % enemiesInterval === 0 && player.score < winningScore) {
+  if (currentFrame % enemy.frequency === 0 && player.score < winningScore) {
     let yPos = Math.floor(Math.random() * 5 + 1) * cellSize + cellGap;
-    enemyPositions.push(yPos);
-    enemies.push(new Enemy(yPos));
-    if (enemiesInterval > 100) enemiesInterval -= 25;
+    enemy.positions.push(yPos);
+    enemy.units.push(new Enemy(yPos));
+    if (enemy.frequency > 100) enemy.frequency -= 25;
   }
 }
 
@@ -477,7 +480,7 @@ function handleGameStatus() {
     ctx.font = "90px Arial";
     ctx.fillText("GAME OVER", 125, 330);
   }
-  if (player.score >= winningScore && enemies.length === 0) {
+  if (player.score >= winningScore && enemy.units.length === 0) {
     ctx.fillStyle = "black";
     ctx.font = "60px Arial";
     ctx.fillText("LEVEL COMPLETE", 130, 300);
