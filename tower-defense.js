@@ -84,7 +84,7 @@ class Cell extends TD.Base.BaseCanvasModel {
   }
 
   draw() {
-    if (mouse.x && mouse.y && isColliding(this, mouse)) {
+    if (mouse.x && mouse.y && TD.utils.isColliding(this, mouse)) {
       ctx.strokeStyle = "black";
       ctx.strokeRect(this.x, this.y, this.width, this.height);
     }
@@ -133,7 +133,7 @@ function handleProjectiles() {
       if (
         enemy.units[j] &&
         player.projectiles[i] &&
-        isColliding(player.projectiles[i], enemy.units[j])
+        TD.utils.isColliding(player.projectiles[i], enemy.units[j])
       ) {
         enemy.units[j].health -= player.projectiles[i].power;
         player.projectiles.splice(i, 1);
@@ -191,7 +191,7 @@ function handleDefenders() {
     unit.shooting = enemy.positions.indexOf(unit.y) !== -1;
     for (let j = 0; j < enemy.units.length; j++) {
       const enemyUnit = enemy.units[j];
-      if (unit && isColliding(unit, enemyUnit)) {
+      if (unit && TD.utils.isColliding(unit, enemyUnit)) {
         unit.health -= 0.5;
         enemyUnit.movement = 0;
       }
@@ -218,7 +218,7 @@ function chooseDefender() {
       width: pu.width,
       height: pu.height,
     };
-    if (isColliding(mouse, coords) && mouse.clicked) {
+    if (TD.utils.isColliding(mouse, coords) && mouse.clicked) {
       player.selectedUnit = i;
     }
     const strokes = actionBar.unitStrokes;
@@ -250,11 +250,13 @@ function chooseDefender() {
 class Enemy extends TD.Base.BaseUnit {
   constructor(yPos) {
     const sprite =
-      playable.units.enemy[randomUpTo(playable.units.enemy.length, true)];
+      playable.units.enemy[
+        TD.utils.random.upTo(playable.units.enemy.length, true)
+      ];
     const width = board.cell.size - board.cell.gap * 2;
     const height = board.cell.size - board.cell.gap * 2;
     super(canvas.width, yPos, width, height, 100, sprite);
-    this.speed = randomUpTo(0.8) + 0.4;
+    this.speed = TD.utils.random.upTo(0.8) + 0.4;
     this.movement = this.speed;
   }
 
@@ -296,7 +298,8 @@ function handleEnemies() {
     gameState.frame % enemy.frequency === 0 &&
     player.score < gameState.winningScore
   ) {
-    let yPos = (randomUpTo(5, true) + 1) * board.cell.size + board.cell.gap;
+    let yPos =
+      (TD.utils.random.upTo(5, true) + 1) * board.cell.size + board.cell.gap;
     enemy.positions.push(yPos);
     enemy.units.push(new Enemy(yPos));
     if (enemy.frequency > 100) enemy.frequency -= 25;
@@ -350,13 +353,13 @@ function handleFloatingMessages() {
 class Resource extends TD.Base.BaseCanvasModel {
   constructor() {
     super(
-      randomUpTo(canvas.width - board.cell.size),
-      (randomUpTo(5, true) + 1) * (board.cell.size + 25),
+      TD.utils.random.upTo(canvas.width - board.cell.size),
+      (TD.utils.random.upTo(5, true) + 1) * (board.cell.size + 25),
       board.cell.size * 0.6,
       board.cell.size * 0.6
     );
     const amounts = playable.resources.amounts;
-    this.amount = amounts[randomUpTo(amounts.length, true)];
+    this.amount = amounts[TD.utils.random.upTo(amounts.length, true)];
   }
 
   draw() {
@@ -375,7 +378,7 @@ function handleResources() {
   for (let i = 0; i < gameState.pickups.length; i++) {
     const pickup = gameState.pickups[i];
     pickup.draw();
-    if (pickup && mouse.x && mouse.y && isColliding(pickup, mouse)) {
+    if (pickup && mouse.x && mouse.y && TD.utils.isColliding(pickup, mouse)) {
       player.resources += pickup.amount;
       gameState.messages.push(
         new FloatingMessage(
@@ -475,22 +478,3 @@ function handleGameStatus() {
   gameState.frame++;
   if (!gameState.over) requestAnimationFrame(animate);
 })();
-
-function isColliding(first, second) {
-  if (
-    !(
-      first.x > second.x + second.width ||
-      first.x + first.width < second.x ||
-      first.y > second.y + second.height ||
-      first.y + first.height < second.y
-    )
-  ) {
-    return true;
-  }
-  return false;
-}
-
-function randomUpTo(num, floor = false) {
-  const res = Math.random() * num;
-  return floor ? Math.floor(res) : res;
-}
