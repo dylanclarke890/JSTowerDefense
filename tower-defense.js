@@ -136,7 +136,7 @@ function handleFloatingMessages() {
     message.draw();
     if (message.lifeSpan > 50) {
       gameState.messages.splice(i, 1);
-      i--;
+      if (i > 0) i--;
     }
   }
 }
@@ -173,7 +173,7 @@ function handleResources() {
   for (let i = 0; i < gameState.pickups.length; i++) {
     const pickup = gameState.pickups[i];
     pickup.draw();
-    if (pickup && mouse.x && mouse.y && TD.utils.isColliding(pickup, mouse)) {
+    if (mouse.x && mouse.y && TD.utils.isColliding(pickup, mouse)) {
       player.resources += pickup.amount;
       gameState.messages.push(
         new FloatingMessage(
@@ -188,7 +188,7 @@ function handleResources() {
         new FloatingMessage(`+${pickup.amount}`, 250, 50, 30, "gold")
       );
       gameState.pickups.splice(i, 1);
-      i--;
+      if (i > 0) i--;
     }
   }
 }
@@ -247,20 +247,16 @@ function handleProjectiles() {
 
     for (let j = 0; j < enemy.units.length; j++) {
       const enemyUnit = enemy.units[j];
-      if (
-        enemyUnit &&
-        projectile &&
-        TD.utils.isColliding(projectile, enemyUnit)
-      ) {
+      if (TD.utils.isColliding(projectile, enemyUnit)) {
         enemyUnit.health -= projectile.power;
         player.projectiles.splice(i, 1);
-        i--;
+        if (i > 0) i--;
       }
     }
 
-    if (projectile && projectile.x > canvas.width - board.cell.size) {
+    if (projectile.x > canvas.width - board.cell.size) {
       player.projectiles.splice(i, 1);
-      i--;
+      if (i > 0) i--;
     }
   }
 }
@@ -270,16 +266,16 @@ function handleDefenders() {
     const unit = player.units[i];
     unit.update();
     unit.draw();
-    unit.shooting = enemy.positions.indexOf(unit.y) !== -1;
+    unit.shooting = enemy.positions.indexOf(unit.y) !== -1; // there is an enemy in the same row.
     for (let j = 0; j < enemy.units.length; j++) {
       const enemyUnit = enemy.units[j];
-      if (unit && TD.utils.isColliding(unit, enemyUnit)) {
+      if (TD.utils.isColliding(unit, enemyUnit)) {
         unit.health -= 0.5;
         enemyUnit.movement = 0;
       }
       if (unit && unit.health <= 0) {
         player.units.splice(i, 1);
-        i--;
+        if (i > 0) i--;
         enemyUnit.movement = enemyUnit.speed;
       }
     }
@@ -330,8 +326,8 @@ function handleEnemies() {
     const unit = enemy.units[i];
     unit.update();
     unit.draw();
-    if (unit && unit.x < 0) gameState.over = true;
-    if (unit && unit.health <= 0) {
+    if (unit.x < 0) gameState.over = true;
+    if (unit.health <= 0) {
       const resourcesGained = unit.maxHealth / 10;
       gameState.messages.push(
         new FloatingMessage(`+${resourcesGained}`, 250, 50, 30, "gold")
@@ -343,7 +339,7 @@ function handleEnemies() {
       player.score += resourcesGained;
       enemy.positions.splice(enemy.positions.indexOf(unit.y), 1);
       enemy.units.splice(i, 1);
-      i--;
+      if (i > 0) i--;
     }
   }
   if (
