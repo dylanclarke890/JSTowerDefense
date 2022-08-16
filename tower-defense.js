@@ -102,46 +102,6 @@ function handleGameGrid() {
 }
 
 /***********************************************************
- *              F L O A T I N G  M E S S A G E S
- */
-class FloatingMessage extends TD.base.BaseCanvasModel {
-  constructor(value, x, y, size, color) {
-    super(x, y, null, null); // keep things consistent
-    this.value = value;
-    this.size = size;
-    this.lifeSpan = 0;
-    this.color = color;
-    this.opacity = 1;
-  }
-
-  update() {
-    this.y -= 0.3;
-    this.lifeSpan++;
-    if (this.opacity > 0.03) this.opacity -= 0.03;
-  }
-
-  draw() {
-    ctx.globalAlpha = this.opacity;
-    ctx.fillStyle = this.color;
-    ctx.font = `${this.size}px Arial`;
-    ctx.fillText(this.value, this.x, this.y);
-    ctx.globalAlpha = 1;
-  }
-}
-
-function handleFloatingMessages() {
-  for (let i = 0; i < gameState.messages.length; i++) {
-    const message = gameState.messages[i];
-    message.update();
-    message.draw();
-    if (message.lifeSpan > 50) {
-      gameState.messages.splice(i, 1);
-      if (i > 0) i--;
-    }
-  }
-}
-
-/***********************************************************
  *                  E V E N T S
  */
 
@@ -174,7 +134,7 @@ canvas.addEventListener("click", () => {
     player.resources -= defenderCost;
   } else {
     gameState.messages.push(
-      new FloatingMessage("Missing resources", mouse.x, mouse.y, 20, "red")
+      new TD.messages.Floating("Missing resources", mouse.x, mouse.y, 20, "red")
     );
   }
 });
@@ -257,7 +217,7 @@ function handleResources() {
     if (mouse.x && mouse.y && TD.utils.isColliding(pickup, mouse)) {
       player.resources += pickup.amount;
       gameState.messages.push(
-        new FloatingMessage(
+        new TD.messages.Floating(
           `+${pickup.amount}`,
           pickup.x,
           pickup.y,
@@ -266,7 +226,7 @@ function handleResources() {
         )
       );
       gameState.messages.push(
-        new FloatingMessage(`+${pickup.amount}`, 250, 50, 30, "gold")
+        new TD.messages.Floating(`+${pickup.amount}`, 250, 50, 30, "gold")
       );
       gameState.pickups.splice(i, 1);
       if (i > 0) i--;
@@ -305,10 +265,16 @@ function handleEnemies() {
     if (unit.health <= 0) {
       const resourcesGained = unit.maxHealth / 10;
       gameState.messages.push(
-        new FloatingMessage(`+${resourcesGained}`, 250, 50, 30, "gold")
+        new TD.messages.Floating(`+${resourcesGained}`, 250, 50, 30, "gold")
       );
       gameState.messages.push(
-        new FloatingMessage(`+${resourcesGained}`, unit.x, unit.y, 30, "black")
+        new TD.messages.Floating(
+          `+${resourcesGained}`,
+          unit.x,
+          unit.y,
+          30,
+          "black"
+        )
       );
       player.resources += resourcesGained;
       player.score += resourcesGained;
@@ -345,6 +311,18 @@ function handleGameStatus() {
     ctx.fillText("LEVEL COMPLETE", 130, 300);
     ctx.font = "30px Arial";
     ctx.fillText(`You win with ${player.score} points!`, 134, 340);
+  }
+}
+
+function handleFloatingMessages() {
+  for (let i = 0; i < gameState.messages.length; i++) {
+    const message = gameState.messages[i];
+    message.update();
+    message.draw();
+    if (message.lifeSpan > 50) {
+      gameState.messages.splice(i, 1);
+      if (i > 0) i--;
+    }
   }
 }
 
