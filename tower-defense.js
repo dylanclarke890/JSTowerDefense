@@ -126,25 +126,24 @@ class Projectile extends TD.Base.BaseCanvasModel {
 
 function handleProjectiles() {
   for (let i = 0; i < player.projectiles.length; i++) {
-    player.projectiles[i].update();
-    player.projectiles[i].draw();
+    const projectile = player.projectiles[i];
+    projectile.update();
+    projectile.draw();
 
     for (let j = 0; j < enemy.units.length; j++) {
+      const enemyUnit = enemy.units[j];
       if (
-        enemy.units[j] &&
-        player.projectiles[i] &&
-        TD.utils.isColliding(player.projectiles[i], enemy.units[j])
+        enemyUnit &&
+        projectile &&
+        TD.utils.isColliding(projectile, enemyUnit)
       ) {
-        enemy.units[j].health -= player.projectiles[i].power;
+        enemyUnit.health -= projectile.power;
         player.projectiles.splice(i, 1);
         i--;
       }
     }
 
-    if (
-      player.projectiles[i] &&
-      player.projectiles[i].x > canvas.width - board.cell.size
-    ) {
+    if (projectile && projectile.x > canvas.width - board.cell.size) {
       player.projectiles.splice(i, 1);
       i--;
     }
