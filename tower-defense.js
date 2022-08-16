@@ -3,76 +3,6 @@ const ctx = canvas.getContext("2d");
 canvas.width = 900;
 canvas.height = 600;
 
-/***********************************************************
- *              B A S E  C L A S S E S
- */
-
- class Sprite {
-   constructor(src, width, height, minFrame, maxFrame) {
-     this.image = new Image();
-     this.image.src = src;
-     this.width = width;
-     this.height = height;
-     this.minFrame = minFrame;
-     this.maxFrame = maxFrame;
-   }
- }
-
- class BaseCanvasModel {
-   constructor(x, y, width, height) {
-     this.x = x;
-     this.y = y;
-     this.width = width;
-     this.height = height;
-   }
-   update() {
-     throw new Error("method not implemented");
-   }
-   draw() {
-     throw new Error("method not implemented");
-   }
- }
-
- class BaseUnit extends BaseCanvasModel {
-   constructor(x, y, width, height, health, sprite) {
-     super(x, y, width, height);
-     this.health = health;
-     this.maxHealth = health;
-     this.frameX = 0;
-     this.frameY = 0;
-     this.sprite = sprite;
-   }
-
-   get unitHealth() {
-     return Math.floor(this.health);
-   }
-
-   nextSpriteFrame() {
-     if (this.frameX < this.sprite.maxFrame) this.frameX++;
-     else this.frameX = this.sprite.minFrame;
-   }
-
-   drawHP(fillStyle, font, x, y) {
-     ctx.fillStyle = fillStyle;
-     ctx.font = font;
-     ctx.fillText(this.unitHealth, x, y);
-   }
-
-   drawSprite() {
-     ctx.drawImage(
-       this.sprite.image,
-       this.frameX * this.sprite.width,
-       0,
-       this.sprite.width,
-       this.sprite.height,
-       this.x,
-       this.y,
-       this.width,
-       this.height
-     );
-   }
- }
-
  /***********************************************************
   *              G L O B A L  V A R I A B L E S
   */
@@ -99,8 +29,8 @@ canvas.height = 600;
    winningScore: 50,
  };
 
- const plant = new Sprite("sprites/plant.png", 167, 256, 0, 1);
- const zombie = new Sprite("sprites/zombie.png", 290, 420, 0, 7);
+ const plant = new TD.Base.Sprite("sprites/plant.png", 167, 256, 0, 1);
+ const zombie = new TD.Base.Sprite("sprites/zombie.png", 290, 420, 0, 7);
 
  const playable = {
    units: {
@@ -147,7 +77,7 @@ canvas.height = 600;
   *              G A M E  B O A R D
   */
 
- class Cell extends BaseCanvasModel {
+ class Cell extends TD.Base.BaseCanvasModel {
    constructor(x, y) {
      super(x, y, board.cell.size, board.cell.size);
    }
@@ -174,7 +104,7 @@ canvas.height = 600;
   *              P R O J E C T I L E S
   */
 
- class Projectile extends BaseCanvasModel {
+ class Projectile extends TD.Base.BaseCanvasModel {
    constructor(x, y) {
      super(x, y, 10, 10);
      this.power = 20;
@@ -224,7 +154,7 @@ canvas.height = 600;
   *              D E F E N D E R S
   */
 
- class Defender extends BaseUnit {
+ class Defender extends TD.Base.BaseUnit {
    constructor(x, y) {
      const width = board.cell.size - board.cell.gap * 2;
      const height = board.cell.size - board.cell.gap * 2;
@@ -316,7 +246,7 @@ canvas.height = 600;
   *              E N E M I E S
   */
 
- class Enemy extends BaseUnit {
+ class Enemy extends TD.Base.BaseUnit {
    constructor(yPos) {
      const sprite =
        playable.units.enemy[randomUpTo(playable.units.enemy.length, true)];
@@ -375,7 +305,7 @@ canvas.height = 600;
  /***********************************************************
   *              F L O A T I N G  M E S S A G E S
   */
- class FloatingMessage extends BaseCanvasModel {
+ class FloatingMessage extends TD.Base.BaseCanvasModel {
    constructor(value, x, y, size, color) {
      super(x, y, null, null); // keep things consistent
      this.value = value;
@@ -416,7 +346,7 @@ canvas.height = 600;
   *              R E S O U R C E S
   */
 
- class Resource extends BaseCanvasModel {
+ class Resource extends TD.Base.BaseCanvasModel {
    constructor() {
      super(
        randomUpTo(canvas.width - board.cell.size),
