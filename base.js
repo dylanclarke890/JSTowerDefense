@@ -21,11 +21,11 @@ TD.Base.BaseCanvasModel = class {
   }
 
   update() {
-    throw new Error("method not implemented");
+    throw new Error("Method not implemented.");
   }
 
   draw() {
-    throw new Error("method not implemented");
+    throw new Error("Method not implemented.");
   }
 };
 
