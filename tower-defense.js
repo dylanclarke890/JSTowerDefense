@@ -143,21 +143,6 @@ canvas.height = 600;
    },
  };
 
- canvas.addEventListener("mousemove", (e) => {
-   mouse.x = e.x - actionBar.canvasPosition.left;
-   mouse.y = e.y - actionBar.canvasPosition.top;
- });
- canvas.addEventListener("mouseleave", () => {
-   mouse.x = undefined;
-   mouse.y = undefined;
- });
- canvas.addEventListener("mousedown", () => {
-   mouse.clicked = true;
- });
- canvas.addEventListener("mouseup", () => {
-   mouse.clicked = false;
- });
-
  /***********************************************************
   *              G A M E  B O A R D
   */
@@ -480,11 +465,25 @@ function handleResources() {
 }
 
 /***********************************************************
- *              U T I L I T I E S
+ *                  E V E N T S
  */
 
-window.addEventListener("resize", () => {
-  actionBar.canvasPosition = canvas.getBoundingClientRect();
+canvas.addEventListener("mousemove", (e) => {
+  mouse.x = e.x - actionBar.canvasPosition.left;
+  mouse.y = e.y - actionBar.canvasPosition.top;
+});
+
+canvas.addEventListener("mouseleave", () => {
+  mouse.x = undefined;
+  mouse.y = undefined;
+});
+
+canvas.addEventListener("mousedown", () => {
+  mouse.clicked = true;
+});
+
+canvas.addEventListener("mouseup", () => {
+  mouse.clicked = false;
 });
 
 canvas.addEventListener("click", () => {
@@ -502,6 +501,14 @@ canvas.addEventListener("click", () => {
     );
   }
 });
+
+window.addEventListener("resize", () => {
+  actionBar.canvasPosition = canvas.getBoundingClientRect();
+});
+
+/***********************************************************
+ *              U T I L I T I E S
+ */
 
 function handleGameStatus() {
   ctx.fillStyle = "gold";
