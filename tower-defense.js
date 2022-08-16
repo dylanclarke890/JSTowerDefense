@@ -136,6 +136,11 @@ canvas.height = 600;
      normal: "black",
      selected: "gold",
    },
+   icons: {
+     width: 70,
+     height: 85,
+     gap: 3,
+   },
  };
 
  canvas.addEventListener("mousemove", (e) => {
@@ -288,11 +293,9 @@ canvas.height = 600;
    ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
    let currentX = 7;
    let currentY = 7;
-   const iconWidth = 70;
-   const iconHeight = 85;
-   const gapBetweenIcons = 3;
+   const { width, height, gap } = actionBar.icons;
    playable.units.player.forEach((pu, i) => {
-     ctx.fillRect(currentX, currentY, iconWidth, iconHeight);
+     ctx.fillRect(currentX, currentY, width, height);
      const coords = {
        x: currentX,
        y: currentY,
@@ -305,9 +308,9 @@ canvas.height = 600;
      const strokes = actionBar.unitStrokes;
      ctx.strokeStyle =
        player.selectedUnit === i ? strokes.selected : strokes.normal;
-     ctx.strokeRect(currentX, currentY, iconWidth, iconHeight);
+     ctx.strokeRect(currentX, currentY, width, height);
      currentX += 10;
-     currentY += gapBetweenIcons;
+     currentY += gap;
      ctx.drawImage(
        pu.image,
        0,
@@ -319,8 +322,8 @@ canvas.height = 600;
        50,
        80
      );
-     currentY -= gapBetweenIcons;
-     currentX += iconWidth + gapBetweenIcons;
+     currentY -= gap;
+     currentX += width + gap;
    });
  }
 
