@@ -107,6 +107,9 @@ canvas.height = 600;
      player: [plant, plant],
      enemy: [zombie],
    },
+   resources: {
+     amounts: [20, 30, 40],
+   },
  };
 
  const board = {
@@ -115,9 +118,6 @@ canvas.height = 600;
      size: 100,
    },
    grid: [],
-   resources: {
-     amounts: [20, 30, 40],
-   },
  };
 
  const mouse = {
@@ -352,102 +352,102 @@ canvas.height = 600;
    }
  }
 
-function handleEnemies() {
-  for (let i = 0; i < enemy.units.length; i++) {
-    const unit = enemy.units[i];
-    unit.update();
-    unit.draw();
-    if (unit && unit.x < 0) gameState.over = true;
-    if (unit && unit.health <= 0) {
-      const resourcesGained = unit.maxHealth / 10;
-      gameState.messages.push(
-        new FloatingMessage(`+${resourcesGained}`, 250, 50, 30, "gold")
-      );
-      gameState.messages.push(
-        new FloatingMessage(`+${resourcesGained}`, unit.x, unit.y, 30, "black")
-      );
-      player.resources += resourcesGained;
-      player.score += resourcesGained;
-      enemy.positions.splice(enemy.positions.indexOf(unit.y), 1);
-      enemy.units.splice(i, 1);
-      i--;
-    }
-  }
-  if (
-    gameState.frame % enemy.frequency === 0 &&
-    player.score < gameState.winningScore
-  ) {
-    let yPos = (randomUpTo(5, true) + 1) * board.cell.size + board.cell.gap;
-    enemy.positions.push(yPos);
-    enemy.units.push(new Enemy(yPos));
-    if (enemy.frequency > 100) enemy.frequency -= 25;
-  }
-}
+ function handleEnemies() {
+   for (let i = 0; i < enemy.units.length; i++) {
+     const unit = enemy.units[i];
+     unit.update();
+     unit.draw();
+     if (unit && unit.x < 0) gameState.over = true;
+     if (unit && unit.health <= 0) {
+       const resourcesGained = unit.maxHealth / 10;
+       gameState.messages.push(
+         new FloatingMessage(`+${resourcesGained}`, 250, 50, 30, "gold")
+       );
+       gameState.messages.push(
+         new FloatingMessage(`+${resourcesGained}`, unit.x, unit.y, 30, "black")
+       );
+       player.resources += resourcesGained;
+       player.score += resourcesGained;
+       enemy.positions.splice(enemy.positions.indexOf(unit.y), 1);
+       enemy.units.splice(i, 1);
+       i--;
+     }
+   }
+   if (
+     gameState.frame % enemy.frequency === 0 &&
+     player.score < gameState.winningScore
+   ) {
+     let yPos = (randomUpTo(5, true) + 1) * board.cell.size + board.cell.gap;
+     enemy.positions.push(yPos);
+     enemy.units.push(new Enemy(yPos));
+     if (enemy.frequency > 100) enemy.frequency -= 25;
+   }
+ }
 
-/***********************************************************
- *              F L O A T I N G  M E S S A G E S
- */
-class FloatingMessage extends BaseCanvasModel {
-  constructor(value, x, y, size, color) {
-    super(x, y, null, null); // keep things consistent
-    this.value = value;
-    this.size = size;
-    this.lifeSpan = 0;
-    this.color = color;
-    this.opacity = 1;
-  }
+ /***********************************************************
+  *              F L O A T I N G  M E S S A G E S
+  */
+ class FloatingMessage extends BaseCanvasModel {
+   constructor(value, x, y, size, color) {
+     super(x, y, null, null); // keep things consistent
+     this.value = value;
+     this.size = size;
+     this.lifeSpan = 0;
+     this.color = color;
+     this.opacity = 1;
+   }
 
-  update() {
-    this.y -= 0.3;
-    this.lifeSpan++;
-    if (this.opacity > 0.03) this.opacity -= 0.03;
-  }
+   update() {
+     this.y -= 0.3;
+     this.lifeSpan++;
+     if (this.opacity > 0.03) this.opacity -= 0.03;
+   }
 
-  draw() {
-    ctx.globalAlpha = this.opacity;
-    ctx.fillStyle = this.color;
-    ctx.font = `${this.size}px Arial`;
-    ctx.fillText(this.value, this.x, this.y);
-    ctx.globalAlpha = 1;
-  }
-}
+   draw() {
+     ctx.globalAlpha = this.opacity;
+     ctx.fillStyle = this.color;
+     ctx.font = `${this.size}px Arial`;
+     ctx.fillText(this.value, this.x, this.y);
+     ctx.globalAlpha = 1;
+   }
+ }
 
-function handleFloatingMessages() {
-  for (let i = 0; i < gameState.messages.length; i++) {
-    const message = gameState.messages[i];
-    message.update();
-    message.draw();
-    if (message.lifeSpan > 50) {
-      gameState.messages.splice(i, 1);
-      i--;
-    }
-  }
-}
+ function handleFloatingMessages() {
+   for (let i = 0; i < gameState.messages.length; i++) {
+     const message = gameState.messages[i];
+     message.update();
+     message.draw();
+     if (message.lifeSpan > 50) {
+       gameState.messages.splice(i, 1);
+       i--;
+     }
+   }
+ }
 
-/***********************************************************
- *              R E S O U R C E S
- */
+ /***********************************************************
+  *              R E S O U R C E S
+  */
 
-class Resource extends BaseCanvasModel {
-  constructor() {
-    super(
-      randomUpTo(canvas.width - board.cell.size),
-      (randomUpTo(5, true) + 1) * (board.cell.size + 25),
-      board.cell.size * 0.6,
-      board.cell.size * 0.6
-    );
-    const amounts = board.resources.amounts;
-    this.amount = amounts[randomUpTo(amounts.length, true)];
-  }
+ class Resource extends BaseCanvasModel {
+   constructor() {
+     super(
+       randomUpTo(canvas.width - board.cell.size),
+       (randomUpTo(5, true) + 1) * (board.cell.size + 25),
+       board.cell.size * 0.6,
+       board.cell.size * 0.6
+     );
+     const amounts = playable.resources.amounts;
+     this.amount = amounts[randomUpTo(amounts.length, true)];
+   }
 
-  draw() {
-    ctx.fillStyle = "yellow";
-    ctx.fillRect(this.x, this.y, this.width, this.height);
-    ctx.fillStyle = "black";
-    ctx.font = "20px Arial";
-    ctx.fillText(this.amount, this.x + 15, this.y + 25);
-  }
-}
+   draw() {
+     ctx.fillStyle = "yellow";
+     ctx.fillRect(this.x, this.y, this.width, this.height);
+     ctx.fillStyle = "black";
+     ctx.font = "20px Arial";
+     ctx.fillText(this.amount, this.x + 15, this.y + 25);
+   }
+ }
 
 function handleResources() {
   if (gameState.frame % 500 === 0 && player.score < gameState.winningScore) {
