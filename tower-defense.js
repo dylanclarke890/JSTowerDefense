@@ -30,8 +30,8 @@ const gameState = {
   winningScore: 50,
 };
 
-const plant = new TD.Base.Sprite("sprites/plant.png", 167, 256, 0, 1);
-const zombie = new TD.Base.Sprite("sprites/zombie.png", 290, 420, 0, 7);
+const plant = new TD.base.Sprite("sprites/plant.png", 167, 256, 0, 1);
+const zombie = new TD.base.Sprite("sprites/zombie.png", 290, 420, 0, 7);
 
 const playable = {
   units: {
@@ -78,7 +78,7 @@ const actionBar = {
  *              G A M E  B O A R D
  */
 
-class Cell extends TD.Base.BaseCanvasModel {
+class Cell extends TD.base.BaseCanvasModel {
   constructor(x, y) {
     super(x, y, board.cell.size, board.cell.size);
   }
@@ -102,166 +102,9 @@ function handleGameGrid() {
 }
 
 /***********************************************************
- *              D E F E N D E R S
- */
-
-class Defender extends TD.Base.BaseUnit {
-  constructor(x, y) {
-    const width = board.cell.size - board.cell.gap * 2;
-    const height = board.cell.size - board.cell.gap * 2;
-    const sprite = playable.units.player[player.selectedUnit];
-    super(x, y, width, height, 100, sprite);
-    this.shooting = false;
-    this.shootNow = false;
-    this.timer = 0;
-  }
-
-  update() {
-    if (gameState.frame % 16 === 0) {
-      this.nextSpriteFrame();
-      if (this.frameX === 1) this.shootNow = true;
-    }
-    if (this.shooting && this.shootNow) {
-      player.projectiles.push(
-        new TD.Projectile.Standard(this.x + 70, this.y + 50)
-      );
-      this.shootNow = false;
-    }
-  }
-
-  draw() {
-    this.drawSprite();
-    this.drawHP("gold", "20px Arial", this.x + 15, this.y + 30);
-  }
-}
-
-function handleDefenders() {
-  for (let i = 0; i < player.units.length; i++) {
-    const unit = player.units[i];
-    unit.update();
-    unit.draw();
-    unit.shooting = enemy.positions.indexOf(unit.y) !== -1;
-    for (let j = 0; j < enemy.units.length; j++) {
-      const enemyUnit = enemy.units[j];
-      if (unit && TD.utils.isColliding(unit, enemyUnit)) {
-        unit.health -= 0.5;
-        enemyUnit.movement = 0;
-      }
-      if (unit && unit.health <= 0) {
-        player.units.splice(i, 1);
-        i--;
-        enemyUnit.movement = enemyUnit.speed;
-      }
-    }
-  }
-}
-
-function chooseDefender() {
-  ctx.lineWidth = 1;
-  ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
-  let currentX = 7;
-  let currentY = 7;
-  const { width, height, gap } = actionBar.icons;
-  playable.units.player.forEach((pu, i) => {
-    ctx.fillRect(currentX, currentY, width, height);
-    const coords = {
-      x: currentX,
-      y: currentY,
-      width: pu.width,
-      height: pu.height,
-    };
-    if (TD.utils.isColliding(mouse, coords) && mouse.clicked) {
-      player.selectedUnit = i;
-    }
-    const strokes = actionBar.unitStrokes;
-    ctx.strokeStyle =
-      player.selectedUnit === i ? strokes.selected : strokes.normal;
-    ctx.strokeRect(currentX, currentY, width, height);
-    currentX += 10;
-    currentY += gap;
-    ctx.drawImage(
-      pu.image,
-      0,
-      0,
-      pu.width,
-      pu.height,
-      currentX,
-      currentY,
-      50,
-      80
-    );
-    currentY -= gap;
-    currentX += width + gap;
-  });
-}
-
-/***********************************************************
- *              E N E M I E S
- */
-
-class Enemy extends TD.Base.BaseUnit {
-  constructor(yPos) {
-    const sprite =
-      playable.units.enemy[
-        TD.utils.random.upTo(playable.units.enemy.length, true)
-      ];
-    const width = board.cell.size - board.cell.gap * 2;
-    const height = board.cell.size - board.cell.gap * 2;
-    super(canvas.width, yPos, width, height, 100, sprite);
-    this.speed = TD.utils.random.upTo(0.8) + 0.4;
-    this.movement = this.speed;
-  }
-
-  update() {
-    this.x -= this.movement;
-    if (gameState.frame % 2 === 0) {
-      this.nextSpriteFrame();
-    }
-  }
-
-  draw() {
-    this.drawHP("black", "20px Arial", this.x + 15, this.y + 30);
-    this.drawSprite();
-  }
-}
-
-function handleEnemies() {
-  for (let i = 0; i < enemy.units.length; i++) {
-    const unit = enemy.units[i];
-    unit.update();
-    unit.draw();
-    if (unit && unit.x < 0) gameState.over = true;
-    if (unit && unit.health <= 0) {
-      const resourcesGained = unit.maxHealth / 10;
-      gameState.messages.push(
-        new FloatingMessage(`+${resourcesGained}`, 250, 50, 30, "gold")
-      );
-      gameState.messages.push(
-        new FloatingMessage(`+${resourcesGained}`, unit.x, unit.y, 30, "black")
-      );
-      player.resources += resourcesGained;
-      player.score += resourcesGained;
-      enemy.positions.splice(enemy.positions.indexOf(unit.y), 1);
-      enemy.units.splice(i, 1);
-      i--;
-    }
-  }
-  if (
-    gameState.frame % enemy.frequency === 0 &&
-    player.score < gameState.winningScore
-  ) {
-    let yPos =
-      (TD.utils.random.upTo(5, true) + 1) * board.cell.size + board.cell.gap;
-    enemy.positions.push(yPos);
-    enemy.units.push(new Enemy(yPos));
-    if (enemy.frequency > 100) enemy.frequency -= 25;
-  }
-}
-
-/***********************************************************
  *              F L O A T I N G  M E S S A G E S
  */
-class FloatingMessage extends TD.Base.BaseCanvasModel {
+class FloatingMessage extends TD.base.BaseCanvasModel {
   constructor(value, x, y, size, color) {
     super(x, y, null, null); // keep things consistent
     this.value = value;
@@ -302,7 +145,7 @@ function handleFloatingMessages() {
  *              R E S O U R C E S
  */
 
-class Resource extends TD.Base.BaseCanvasModel {
+class Resource extends TD.base.BaseCanvasModel {
   constructor() {
     super(
       TD.utils.random.upTo(canvas.width - board.cell.size),
@@ -379,7 +222,7 @@ canvas.addEventListener("click", () => {
   if (player.units.some((def) => def.x === gridX && def.y === gridY)) return;
   let defenderCost = 100;
   if (defenderCost <= player.resources) {
-    player.units.push(new Defender(gridX, gridY));
+    player.units.push(new TD.units.Defender(gridX, gridY));
     player.resources -= defenderCost;
   } else {
     gameState.messages.push(
@@ -422,6 +265,98 @@ function handleProjectiles() {
   }
 }
 
+function handleDefenders() {
+  for (let i = 0; i < player.units.length; i++) {
+    const unit = player.units[i];
+    unit.update();
+    unit.draw();
+    unit.shooting = enemy.positions.indexOf(unit.y) !== -1;
+    for (let j = 0; j < enemy.units.length; j++) {
+      const enemyUnit = enemy.units[j];
+      if (unit && TD.utils.isColliding(unit, enemyUnit)) {
+        unit.health -= 0.5;
+        enemyUnit.movement = 0;
+      }
+      if (unit && unit.health <= 0) {
+        player.units.splice(i, 1);
+        i--;
+        enemyUnit.movement = enemyUnit.speed;
+      }
+    }
+  }
+}
+
+function chooseDefender() {
+  ctx.lineWidth = 1;
+  ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+  let currentX = 7;
+  let currentY = 7;
+  const { width, height, gap } = actionBar.icons;
+  playable.units.player.forEach((pu, i) => {
+    ctx.fillRect(currentX, currentY, width, height);
+    const coords = {
+      x: currentX,
+      y: currentY,
+      width: pu.width,
+      height: pu.height,
+    };
+    if (TD.utils.isColliding(mouse, coords) && mouse.clicked) {
+      player.selectedUnit = i;
+    }
+    const strokes = actionBar.unitStrokes;
+    ctx.strokeStyle =
+      player.selectedUnit === i ? strokes.selected : strokes.normal;
+    ctx.strokeRect(currentX, currentY, width, height);
+    currentX += 10;
+    currentY += gap;
+    ctx.drawImage(
+      pu.image,
+      0,
+      0,
+      pu.width,
+      pu.height,
+      currentX,
+      currentY,
+      50,
+      80
+    );
+    currentY -= gap;
+    currentX += width + gap;
+  });
+}
+
+function handleEnemies() {
+  for (let i = 0; i < enemy.units.length; i++) {
+    const unit = enemy.units[i];
+    unit.update();
+    unit.draw();
+    if (unit && unit.x < 0) gameState.over = true;
+    if (unit && unit.health <= 0) {
+      const resourcesGained = unit.maxHealth / 10;
+      gameState.messages.push(
+        new FloatingMessage(`+${resourcesGained}`, 250, 50, 30, "gold")
+      );
+      gameState.messages.push(
+        new FloatingMessage(`+${resourcesGained}`, unit.x, unit.y, 30, "black")
+      );
+      player.resources += resourcesGained;
+      player.score += resourcesGained;
+      enemy.positions.splice(enemy.positions.indexOf(unit.y), 1);
+      enemy.units.splice(i, 1);
+      i--;
+    }
+  }
+  if (
+    gameState.frame % enemy.frequency === 0 &&
+    player.score < gameState.winningScore
+  ) {
+    let yPos =
+      (TD.utils.random.upTo(5, true) + 1) * board.cell.size + board.cell.gap;
+    enemy.positions.push(yPos);
+    enemy.units.push(new TD.units.Enemy(yPos));
+    if (enemy.frequency > 100) enemy.frequency -= 25;
+  }
+}
 
 function handleGameStatus() {
   ctx.fillStyle = "gold";

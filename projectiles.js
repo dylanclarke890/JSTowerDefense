@@ -1,7 +1,7 @@
-TD = TD || {};
-TD.Projectile = TD.Projectile || {};
+var TD = TD || {};
+TD.projectiles = TD.projectiles || {};
 
-TD.Projectile.Base = class extends TD.Base.BaseCanvasModel {
+TD.projectiles.Base = class extends TD.base.BaseCanvasModel {
   constructor(x, y, width, height, power, speed) {
     super(x, y, width, height);
     this.power = power;
@@ -20,7 +20,7 @@ TD.Projectile.Base = class extends TD.Base.BaseCanvasModel {
   }
 };
 
-TD.Projectile.Standard = class extends TD.Projectile.Base {
+TD.projectiles.Standard = class extends TD.projectiles.Base {
   constructor(x, y) {
     super(x, y, 10, 10, 20, 5);
   }

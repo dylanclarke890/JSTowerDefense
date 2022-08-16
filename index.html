@@ -7,9 +7,10 @@
 </head>
 <body>
   <canvas id="play-area"></canvas>
-  <script src="base.js"></script>
-  <script src="utils.js"></script>
+  <script src="base.js"></script> <!-- Needs to be first. -->
+  <script src="utils.js"></script> <!-- Needs to be immediately after base. -->
   <script src="projectiles.js"></script>
-  <script src="tower-defense.js"></script>
+  <script src="units.js"></script> <!-- Needs to be after projectiles. -->
+  <script src="tower-defense.js"></script> <!-- Needs to be last. -->
 </body>
 </html>
