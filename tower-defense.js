@@ -142,58 +142,6 @@ function handleFloatingMessages() {
 }
 
 /***********************************************************
- *              R E S O U R C E S
- */
-
-class Resource extends TD.base.BaseCanvasModel {
-  constructor() {
-    super(
-      TD.utils.random.upTo(canvas.width - board.cell.size),
-      (TD.utils.random.upTo(5, true) + 1) * (board.cell.size + 25),
-      board.cell.size * 0.6,
-      board.cell.size * 0.6
-    );
-    const amounts = playable.resources.amounts;
-    this.amount = amounts[TD.utils.random.upTo(amounts.length, true)];
-  }
-
-  draw() {
-    ctx.fillStyle = "yellow";
-    ctx.fillRect(this.x, this.y, this.width, this.height);
-    ctx.fillStyle = "black";
-    ctx.font = "20px Arial";
-    ctx.fillText(this.amount, this.x + 15, this.y + 25);
-  }
-}
-
-function handleResources() {
-  if (gameState.frame % 500 === 0 && player.score < gameState.winningScore) {
-    gameState.pickups.push(new Resource());
-  }
-  for (let i = 0; i < gameState.pickups.length; i++) {
-    const pickup = gameState.pickups[i];
-    pickup.draw();
-    if (mouse.x && mouse.y && TD.utils.isColliding(pickup, mouse)) {
-      player.resources += pickup.amount;
-      gameState.messages.push(
-        new FloatingMessage(
-          `+${pickup.amount}`,
-          pickup.x,
-          pickup.y,
-          30,
-          "black"
-        )
-      );
-      gameState.messages.push(
-        new FloatingMessage(`+${pickup.amount}`, 250, 50, 30, "gold")
-      );
-      gameState.pickups.splice(i, 1);
-      if (i > 0) i--;
-    }
-  }
-}
-
-/***********************************************************
  *                  E V E N T S
  */
 
@@ -238,28 +186,6 @@ window.addEventListener("resize", () => {
 /***********************************************************
  *              U T I L I T I E S
  */
-
-function handleProjectiles() {
-  for (let i = 0; i < player.projectiles.length; i++) {
-    const projectile = player.projectiles[i];
-    projectile.update();
-    projectile.draw();
-
-    for (let j = 0; j < enemy.units.length; j++) {
-      const enemyUnit = enemy.units[j];
-      if (TD.utils.isColliding(projectile, enemyUnit)) {
-        enemyUnit.health -= projectile.power;
-        player.projectiles.splice(i, 1);
-        if (i > 0) i--;
-      }
-    }
-
-    if (projectile.x > canvas.width - board.cell.size) {
-      player.projectiles.splice(i, 1);
-      if (i > 0) i--;
-    }
-  }
-}
 
 function handleDefenders() {
   for (let i = 0; i < player.units.length; i++) {
@@ -319,6 +245,55 @@ function chooseDefender() {
     currentY -= gap;
     currentX += width + gap;
   });
+}
+
+function handleResources() {
+  if (gameState.frame % 500 === 0 && player.score < gameState.winningScore) {
+    gameState.pickups.push(new TD.pickups.Resource());
+  }
+  for (let i = 0; i < gameState.pickups.length; i++) {
+    const pickup = gameState.pickups[i];
+    pickup.draw();
+    if (mouse.x && mouse.y && TD.utils.isColliding(pickup, mouse)) {
+      player.resources += pickup.amount;
+      gameState.messages.push(
+        new FloatingMessage(
+          `+${pickup.amount}`,
+          pickup.x,
+          pickup.y,
+          30,
+          "black"
+        )
+      );
+      gameState.messages.push(
+        new FloatingMessage(`+${pickup.amount}`, 250, 50, 30, "gold")
+      );
+      gameState.pickups.splice(i, 1);
+      if (i > 0) i--;
+    }
+  }
+}
+
+function handleProjectiles() {
+  for (let i = 0; i < player.projectiles.length; i++) {
+    const projectile = player.projectiles[i];
+    projectile.update();
+    projectile.draw();
+
+    for (let j = 0; j < enemy.units.length; j++) {
+      const enemyUnit = enemy.units[j];
+      if (TD.utils.isColliding(projectile, enemyUnit)) {
+        enemyUnit.health -= projectile.power;
+        player.projectiles.splice(i, 1);
+        if (i > 0) i--;
+      }
+    }
+
+    if (projectile.x > canvas.width - board.cell.size) {
+      player.projectiles.splice(i, 1);
+      if (i > 0) i--;
+    }
+  }
 }
 
 function handleEnemies() {
