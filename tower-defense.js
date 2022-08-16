@@ -159,7 +159,7 @@ canvas.height = 600;
      }
    }
  }
-
+ // TODO: could cache the grid until forced to reset?
  (function createGrid() {
    for (let y = board.cell.size; y < canvas.height; y += board.cell.size)
      for (let x = 0; x < canvas.width; x += board.cell.size)
