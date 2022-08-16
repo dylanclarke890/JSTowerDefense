@@ -102,55 +102,6 @@ function handleGameGrid() {
 }
 
 /***********************************************************
- *              P R O J E C T I L E S
- */
-
-class Projectile extends TD.Base.BaseCanvasModel {
-  constructor(x, y) {
-    super(x, y, 10, 10);
-    this.power = 20;
-    this.speed = 5;
-  }
-
-  update() {
-    this.x += this.speed;
-  }
-
-  draw() {
-    ctx.fillStyle = "black";
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.width, 0, Math.PI * 2);
-    ctx.fill();
-  }
-}
-
-function handleProjectiles() {
-  for (let i = 0; i < player.projectiles.length; i++) {
-    const projectile = player.projectiles[i];
-    projectile.update();
-    projectile.draw();
-
-    for (let j = 0; j < enemy.units.length; j++) {
-      const enemyUnit = enemy.units[j];
-      if (
-        enemyUnit &&
-        projectile &&
-        TD.utils.isColliding(projectile, enemyUnit)
-      ) {
-        enemyUnit.health -= projectile.power;
-        player.projectiles.splice(i, 1);
-        i--;
-      }
-    }
-
-    if (projectile && projectile.x > canvas.width - board.cell.size) {
-      player.projectiles.splice(i, 1);
-      i--;
-    }
-  }
-}
-
-/***********************************************************
  *              D E F E N D E R S
  */
 
@@ -166,12 +117,14 @@ class Defender extends TD.Base.BaseUnit {
   }
 
   update() {
-    if (gameState.frame % 8 === 0) {
+    if (gameState.frame % 16 === 0) {
       this.nextSpriteFrame();
       if (this.frameX === 1) this.shootNow = true;
     }
     if (this.shooting && this.shootNow) {
-      player.projectiles.push(new Projectile(this.x + 70, this.y + 50));
+      player.projectiles.push(
+        new TD.Projectile.Standard(this.x + 70, this.y + 50)
+      );
       this.shootNow = false;
     }
   }
@@ -442,6 +395,33 @@ window.addEventListener("resize", () => {
 /***********************************************************
  *              U T I L I T I E S
  */
+
+function handleProjectiles() {
+  for (let i = 0; i < player.projectiles.length; i++) {
+    const projectile = player.projectiles[i];
+    projectile.update();
+    projectile.draw();
+
+    for (let j = 0; j < enemy.units.length; j++) {
+      const enemyUnit = enemy.units[j];
+      if (
+        enemyUnit &&
+        projectile &&
+        TD.utils.isColliding(projectile, enemyUnit)
+      ) {
+        enemyUnit.health -= projectile.power;
+        player.projectiles.splice(i, 1);
+        i--;
+      }
+    }
+
+    if (projectile && projectile.x > canvas.width - board.cell.size) {
+      player.projectiles.splice(i, 1);
+      i--;
+    }
+  }
+}
+
 
 function handleGameStatus() {
   ctx.fillStyle = "gold";
