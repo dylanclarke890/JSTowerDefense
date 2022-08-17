@@ -1,8 +1,5 @@
 var TD = TD || {};
-const canvas = document.getElementById("play-area");
-const ctx = canvas.getContext("2d");
-canvas.width = 900;
-canvas.height = 600;
+const [canvas, ctx] = TD.base.new2dCanvas("play-area", 900, 600);
 
 /***********************************************************
  *              G L O B A L  V A R I A B L E S

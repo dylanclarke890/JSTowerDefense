@@ -41,3 +41,11 @@ TD.base.Cell = class extends TD.base.BaseCanvasModel {
     }
   }
 };
+
+TD.base.new2dCanvas = function (id, width, height) {
+  const canvas = document.getElementById(id);
+  const ctx = canvas.getContext("2d");
+  canvas.width = width;
+  canvas.height = height;
+  return [canvas, ctx];
+};
