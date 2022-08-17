@@ -139,6 +139,9 @@ function handleFps() {
   while (times.length && times[0] <= now - 1000) times.shift();
   times.push(now);
   fps.current = times.length;
+  ctx.fillStyle = "gold";
+  ctx.font = "12px Arial";
+  ctx.fillText(`${fps.current} fps`, canvas.width - 40, 15);
 }
 
 function handleDefenders() {
@@ -326,14 +329,12 @@ function handleFloatingMessages() {
       board.grid.push(new TD.base.Cell(x, y));
 })();
 
+// don't repaint the blue bar each time?
 (function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  handleFps();
   ctx.fillStyle = "blue";
   ctx.fillRect(0, 0, actionBar.width, actionBar.height);
-  ctx.fillStyle = "gold";
-  ctx.font = "12px Arial";
-  ctx.fillText(`${fps.current} fps`, canvas.width - 40, 15);
+  handleFps();
   handleGameGrid();
   handleDefenders();
   handleResources();
