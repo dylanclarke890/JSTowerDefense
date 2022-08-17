@@ -235,7 +235,7 @@ function handleProjectiles() {
       }
     }
 
-    if (projectile.x > canvas.width - board.cell.size) {
+    if (projectile.x > canvas.width) {
       player.projectiles.splice(i, 1);
       if (i > 0) i--;
     }
