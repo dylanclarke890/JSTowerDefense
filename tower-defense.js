@@ -106,7 +106,7 @@ canvas.addEventListener("click", () => {
   const { sprite, health, cost } = selected;
   if (cost <= player.resources) {
     player.units.push(
-      new TD.units.Defender(gridX, gridY, sprite, health, cost)
+      new TD.units.Defender(sprite, cost, health, 100, gridX, gridY)
     );
     player.resources -= cost;
   } else {
@@ -265,10 +265,10 @@ function handleEnemies() {
     gameState.frame % enemy.frequency === 0 &&
     player.score < gameState.winningScore
   ) {
-    let yPos =
+    let yPosition =
       (TD.utils.random.upTo(5, true) + 1) * board.cell.size + board.cell.gap;
-    enemy.positions.push(yPos);
-    enemy.units.push(new TD.units.Enemy(yPos));
+    enemy.positions.push(yPosition);
+    enemy.units.push(new TD.units.Enemy(100, 100, yPosition));
     if (enemy.frequency > 100) enemy.frequency -= 25;
   }
 }

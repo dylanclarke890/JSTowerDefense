@@ -47,10 +47,10 @@ TD.units.BaseUnit = class extends TD.base.BaseCanvasModel {
  */
 
 TD.units.Defender = class extends TD.units.BaseUnit {
-  constructor(x, y, sprite, health, cost) {
+  constructor(sprite, cost, health, power, xPosition, yPosition) {
     const width = board.cell.size - board.cell.gap * 2;
     const height = board.cell.size - board.cell.gap * 2;
-    super(sprite, health, 100, width, height, x, y);
+    super(sprite, health, power, width, height, xPosition, yPosition);
     this.cost = cost;
     this.shooting = false;
     this.shootNow = false;
@@ -81,14 +81,14 @@ TD.units.Defender = class extends TD.units.BaseUnit {
  */
 
 TD.units.Enemy = class extends TD.units.BaseUnit {
-  constructor(yPosition) {
+  constructor(health, power, yPosition) {
     const sprite =
       playable.units.enemy[
         TD.utils.random.upTo(playable.units.enemy.length, true)
       ];
     const width = board.cell.size - board.cell.gap * 2;
     const height = board.cell.size - board.cell.gap * 2;
-    super(sprite, 100, 100, width, height, canvas.width, yPosition);
+    super(sprite, health, power, width, height, canvas.width, yPosition);
     this.speed = TD.utils.random.upTo(0.8) + 0.4;
     this.movement = this.speed;
   }
