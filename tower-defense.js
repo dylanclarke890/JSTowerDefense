@@ -28,11 +28,12 @@ const gameState = {
 };
 
 const plant = new TD.base.Sprite("sprites/plant.png", 167, 256, 0, 1);
+const plantCopy = new TD.base.Sprite("sprites/plant.png", 167, 256, 0, 1);
 const zombie = new TD.base.Sprite("sprites/zombie.png", 290, 420, 0, 7);
 
 const playable = {
   units: {
-    player: [plant, plant],
+    player: [plant, plantCopy],
     enemy: [zombie],
   },
   resources: {
@@ -86,6 +87,7 @@ canvas.addEventListener("mouseleave", () => {
 });
 
 canvas.addEventListener("mousedown", () => {
+  console.count("SET");
   mouse.clicked = true;
 });
 
@@ -150,7 +152,7 @@ function handleDefenders() {
   }
 }
 
-function chooseDefender() {
+function createUnitSelector() {
   ctx.lineWidth = 1;
   ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
   let currentX = 7;
@@ -158,13 +160,15 @@ function chooseDefender() {
   const { width, height, gap } = actionBar.icons;
   playable.units.player.forEach((pu, i) => {
     ctx.fillRect(currentX, currentY, width, height);
-    const coords = {
-      x: currentX,
-      y: currentY,
-      width: pu.width,
-      height: pu.height,
-    };
-    if (TD.utils.isColliding(mouse, coords) && mouse.clicked) {
+    if (
+      mouse.clicked &&
+      TD.utils.isColliding(mouse, {
+        x: currentX,
+        y: currentY,
+        width,
+        height,
+      })
+    ) {
       player.selectedUnit = i;
     }
     const strokes = actionBar.unitStrokes;
@@ -317,7 +321,7 @@ function handleFloatingMessages() {
   handleResources();
   handleProjectiles();
   handleEnemies();
-  chooseDefender();
+  createUnitSelector();
   handleGameStatus();
   handleFloatingMessages();
   gameState.frame++;
