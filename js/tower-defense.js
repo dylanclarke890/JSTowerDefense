@@ -103,19 +103,19 @@ canvas.addEventListener("mouseup", () => {
 });
 
 canvas.addEventListener("click", () => {
-  const pos = {
+  const gridPos = {
     x: mouse.x - (mouse.x % board.cell.size) + board.cell.gap,
     y: mouse.y - (mouse.y % board.cell.size) + board.cell.gap,
   };
-  if (pos.y < board.cell.size) return;
-  if (player.units.some((def) => def.x === pos.x && def.y === pos.y)) return;
+  if (gridPos.y < board.cell.size) return;
+  if (player.units.some((def) => def.x === gridPos.x && def.y === gridPos.y)) return;
 
   const selected = playable.units.player[player.selectedUnit];
-  const { sprite, health, cost, power } = selected;
+  const { sprite, cost, ...stats } = selected;
 
   if (cost <= player.resources) {
     player.units.push(
-      new TD.units.Defender(sprite, { ...pos }, { cost, health, power })
+      new TD.units.Defender(sprite, { ...gridPos }, { cost, ...stats })
     );
     player.resources -= cost;
   } else {
@@ -285,15 +285,17 @@ function handleEnemies() {
     gameState.frame % enemy.frequency === 0 &&
     player.score < gameState.winningScore
   ) {
-    let yPosition =
+    const yPosition =
       (TD.utils.random.upTo(5, true) + 1) * board.cell.size + board.cell.gap;
     enemy.positions.push(yPosition);
     const selected =
       playable.units.enemy[
         TD.utils.random.upTo(playable.units.enemy.length, true)
       ];
-    const { sprite, health, power } = selected;
-    enemy.units.push(new TD.units.Enemy(sprite, health, power, yPosition));
+    const { sprite, ...stats } = selected;
+    enemy.units.push(
+      new TD.units.Enemy(sprite, { y: yPosition }, { ...stats })
+    );
     if (enemy.frequency > 100) enemy.frequency -= 25;
   }
 }

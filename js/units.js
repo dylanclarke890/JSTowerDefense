@@ -95,10 +95,14 @@ TD.units.Defender = class extends TD.units.BaseUnit {
  */
 
 TD.units.Enemy = class extends TD.units.BaseUnit {
-  constructor(sprite, health, power, yPosition) {
-    const width = board.cell.size - board.cell.gap * 2;
-    const height = board.cell.size - board.cell.gap * 2;
-    super(sprite, health, power, width, height, canvas.width, yPosition);
+  constructor(sprite, dimensions, stats) {
+    const cellSize = board.cell.size - board.cell.gap * 2;
+    let { x, y, width, height } = dimensions;
+    width ??= cellSize;
+    height ??= cellSize;
+    x ??= canvas.width;
+    const { health, power } = stats;
+    super(sprite, health, power, width, height, x, y);
     this.speed = TD.utils.random.upTo(0.8) + 0.4;
     this.movement = this.speed;
   }
