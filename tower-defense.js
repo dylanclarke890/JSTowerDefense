@@ -87,7 +87,6 @@ canvas.addEventListener("mouseleave", () => {
 });
 
 canvas.addEventListener("mousedown", () => {
-  console.count("SET");
   mouse.clicked = true;
 });
 
