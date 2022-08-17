@@ -2,12 +2,13 @@ var TD = TD || {};
 TD.units = TD.units || {};
 
 TD.units.BaseUnit = class extends TD.base.BaseCanvasModel {
-  constructor(x, y, width, height, health, sprite) {
-    super(x, y, width, height);
-    this.health = health;
-    this.maxHealth = health;
+  constructor(sprite, health, power, width, height, xPosition, yPosition) {
+    super(xPosition, yPosition, width, height);
     this.frameX = 0;
     this.frameY = 0;
+    this.health = health;
+    this.maxHealth = health;
+    this.power = power;
     this.sprite = sprite;
   }
 
@@ -49,7 +50,7 @@ TD.units.Defender = class extends TD.units.BaseUnit {
   constructor(x, y, sprite, health, cost) {
     const width = board.cell.size - board.cell.gap * 2;
     const height = board.cell.size - board.cell.gap * 2;
-    super(x, y, width, height, health, sprite);
+    super(sprite, health, 100, width, height, x, y);
     this.cost = cost;
     this.shooting = false;
     this.shootNow = false;
@@ -80,14 +81,14 @@ TD.units.Defender = class extends TD.units.BaseUnit {
  */
 
 TD.units.Enemy = class extends TD.units.BaseUnit {
-  constructor(yPos) {
+  constructor(yPosition) {
     const sprite =
       playable.units.enemy[
         TD.utils.random.upTo(playable.units.enemy.length, true)
       ];
     const width = board.cell.size - board.cell.gap * 2;
     const height = board.cell.size - board.cell.gap * 2;
-    super(canvas.width, yPos, width, height, 100, sprite);
+    super(sprite, 100, 100, width, height, canvas.width, yPosition);
     this.speed = TD.utils.random.upTo(0.8) + 0.4;
     this.movement = this.speed;
   }
