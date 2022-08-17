@@ -2,25 +2,16 @@ var TD = TD || {};
 TD.units = TD.units || {};
 
 TD.units.BaseUnit = class extends TD.base.BaseCanvasModel {
-  // constructor(sprite, dimensions, stats) {
-  //   this.sprite = sprite;
-  //   const { x, y, width, height } = dimensions;
-  //   super(x, y, width, height);
-  //   const { health, power } = stats;
-  //   this.health = health;
-  //   this.maxHealth = health;
-  //   this.power = power;
-  //   this.frameX = 0;
-  //   this.frameY = 0;
-  // }
-  constructor(sprite, health, power, width, height, xPosition, yPosition) {
-    super(xPosition, yPosition, width, height);
-    this.frameX = 0;
-    this.frameY = 0;
+  constructor(sprite, dimensions, stats) {
+    const { x, y, width, height } = dimensions;
+    super(x, y, width, height);
+    this.sprite = sprite;
+    const { health, power } = stats;
     this.health = health;
     this.maxHealth = health;
     this.power = power;
-    this.sprite = sprite;
+    this.frameX = 0;
+    this.frameY = 0;
   }
 
   get unitHealth() {
@@ -60,11 +51,11 @@ TD.units.BaseUnit = class extends TD.base.BaseCanvasModel {
 TD.units.Defender = class extends TD.units.BaseUnit {
   constructor(sprite, dimensions, stats) {
     const cellSize = board.cell.size - board.cell.gap * 2;
-    let { x, y, width, height } = dimensions || {};
+    let { width, height, ...otherDimensions } = dimensions;
     width ??= cellSize;
     height ??= cellSize;
-    const { cost, health, power } = stats;
-    super(sprite, health, power, width, height, x, y);
+    const { cost, ...otherStats } = stats;
+    super(sprite, { ...otherDimensions, width, height }, { ...otherStats });
     this.cost = cost;
     this.shooting = false;
     this.shootNow = false;
@@ -97,12 +88,12 @@ TD.units.Defender = class extends TD.units.BaseUnit {
 TD.units.Enemy = class extends TD.units.BaseUnit {
   constructor(sprite, dimensions, stats) {
     const cellSize = board.cell.size - board.cell.gap * 2;
-    let { x, y, width, height } = dimensions;
+    let { x, width, height, ...otherDimensions } = dimensions;
     width ??= cellSize;
     height ??= cellSize;
     x ??= canvas.width;
-    const { health, power } = stats;
-    super(sprite, health, power, width, height, x, y);
+    let { ...otherStats } = stats;
+    super(sprite, { width, height, x, ...otherDimensions }, { ...otherStats });
     this.speed = TD.utils.random.upTo(0.8) + 0.4;
     this.movement = this.speed;
   }
