@@ -75,33 +75,6 @@ const actionBar = {
 };
 
 /***********************************************************
- *              G A M E  B O A R D
- */
-
-class Cell extends TD.base.BaseCanvasModel {
-  constructor(x, y) {
-    super(x, y, board.cell.size, board.cell.size);
-  }
-
-  draw() {
-    if (mouse.x && mouse.y && TD.utils.isColliding(this, mouse)) {
-      ctx.strokeStyle = "black";
-      ctx.strokeRect(this.x, this.y, this.width, this.height);
-    }
-  }
-}
-// TODO: could cache the grid until forced to reset?
-(function createGrid() {
-  for (let y = board.cell.size; y < canvas.height; y += board.cell.size)
-    for (let x = 0; x < canvas.width; x += board.cell.size)
-      board.grid.push(new Cell(x, y));
-})();
-
-function handleGameGrid() {
-  for (let i = 0; i < board.grid.length; i++) board.grid[i].draw();
-}
-
-/***********************************************************
  *                  E V E N T S
  */
 
@@ -146,6 +119,18 @@ window.addEventListener("resize", () => {
 /***********************************************************
  *              U T I L I T I E S
  */
+
+(function createGameGrid() {
+  const size = board.cell.size;
+  for (let y = size; y < canvas.height; y += size)
+    for (let x = 0; x < canvas.width; x += size)
+      board.grid.push(new TD.base.Cell(x, y));
+})();
+
+// TODO: could cache the grid until forced to reset?
+function handleGameGrid() {
+  for (let i = 0; i < board.grid.length; i++) board.grid[i].draw();
+}
 
 function handleDefenders() {
   for (let i = 0; i < player.units.length; i++) {

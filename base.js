@@ -29,3 +29,15 @@ TD.base.BaseCanvasModel = class {
   }
 };
 
+TD.base.Cell = class extends TD.base.BaseCanvasModel {
+  constructor(x, y) {
+    super(x, y, board.cell.size, board.cell.size);
+  }
+
+  draw() {
+    if (mouse.x && mouse.y && TD.utils.isColliding(this, mouse)) {
+      ctx.strokeStyle = "black";
+      ctx.strokeRect(this.x, this.y, this.width, this.height);
+    }
+  }
+};
