@@ -21,7 +21,7 @@ TD.projectiles.Base = class extends TD.base.BaseCanvasModel {
 };
 
 TD.projectiles.Standard = class extends TD.projectiles.Base {
-  constructor(x, y, power) {
-    super(x, y, 10, 10, power, 5);
+  constructor(position, stats) {
+    super(position.x, position.y, 10, 10, stats.power, 5);
   }
 };

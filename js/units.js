@@ -67,8 +67,10 @@ TD.units.Defender = class extends TD.units.BaseUnit {
       if (this.frameX === 1) this.shootNow = true;
     }
     if (this.shooting && this.shootNow) {
+      const x = this.x + 70,
+        y = this.y + 50;
       player.projectiles.push(
-        new TD.projectiles.Standard(this.x + 70, this.y + 50, this.power)
+        new TD.projectiles.Standard({ x, y }, { power: this.power })
       );
       this.shootNow = false;
     }
