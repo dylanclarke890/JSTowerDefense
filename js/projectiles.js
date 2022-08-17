@@ -2,8 +2,10 @@ var TD = TD || {};
 TD.projectiles = TD.projectiles || {};
 
 TD.projectiles.Base = class extends TD.base.BaseCanvasModel {
-  constructor(x, y, width, height, power, speed) {
+  constructor(dimensions, stats) {
+    const { x, y, width, height } = dimensions;
     super({ x, y, width, height });
+    const { power, speed } = stats;
     this.power = power;
     this.speed = speed;
   }
@@ -22,6 +24,7 @@ TD.projectiles.Base = class extends TD.base.BaseCanvasModel {
 
 TD.projectiles.Standard = class extends TD.projectiles.Base {
   constructor(position, stats) {
-    super(position.x, position.y, 10, 10, stats.power, 5);
+    const { x, y } = position;
+    super({ x, y, width: 10, height: 10 }, { ...stats, speed: 5 });
   }
 };
