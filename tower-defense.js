@@ -118,13 +118,6 @@ window.addEventListener("resize", () => {
  *                     M A I N
  */
 
-(function createGameGrid() {
-  const size = board.cell.size;
-  for (let y = size; y < canvas.height; y += size)
-    for (let x = 0; x < canvas.width; x += size)
-      board.grid.push(new TD.base.Cell(x, y));
-})();
-
 function handleGameGrid() {
   for (let i = 0; i < board.grid.length; i++) board.grid[i].draw();
 }
@@ -300,6 +293,13 @@ function handleFloatingMessages() {
     if (message.lifeSpan > 50) i = TD.base.splice(gameState.messages, i, 1);
   }
 }
+
+(function createGameGrid() {
+  const size = board.cell.size;
+  for (let y = size; y < canvas.height; y += size)
+    for (let x = 0; x < canvas.width; x += size)
+      board.grid.push(new TD.base.Cell(x, y));
+})();
 
 (function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
