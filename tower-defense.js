@@ -144,8 +144,7 @@ function handleDefenders() {
         enemyUnit.movement = 0;
       }
       if (unit && unit.health <= 0) {
-        player.units.splice(i, 1);
-        if (i > 0) i--;
+        i = TD.base.splice(player.units, i, 1);
         enemyUnit.movement = enemyUnit.speed;
       }
     }
@@ -214,8 +213,7 @@ function handleResources() {
       gameState.messages.push(
         new TD.messages.Floating(`+${pickup.amount}`, 250, 50, 30, "gold")
       );
-      gameState.pickups.splice(i, 1);
-      if (i > 0) i--;
+      i = TD.base.splice(gameState.pickups, i, 1);
     }
   }
 }
@@ -230,15 +228,12 @@ function handleProjectiles() {
       const enemyUnit = enemy.units[j];
       if (TD.utils.isColliding(projectile, enemyUnit)) {
         enemyUnit.health -= projectile.power;
-        player.projectiles.splice(i, 1);
-        if (i > 0) i--;
+        i = TD.base.splice(player.projectiles, i, 1);
       }
     }
 
-    if (projectile.x > canvas.width) {
-      player.projectiles.splice(i, 1);
-      if (i > 0) i--;
-    }
+    if (projectile.x > canvas.width)
+      i = TD.base.splice(player.projectiles, i, 1);
   }
 }
 
@@ -264,9 +259,8 @@ function handleEnemies() {
       );
       player.resources += resourcesGained;
       player.score += resourcesGained;
-      enemy.positions.splice(enemy.positions.indexOf(unit.y), 1);
-      enemy.units.splice(i, 1);
-      if (i > 0) i--;
+      i = TD.base.splice(enemy.units, i, 1);
+      TD.base.splice(enemy.positions, enemy.positions.indexOf(unit.y), 1);
     }
   }
   if (
@@ -305,10 +299,7 @@ function handleFloatingMessages() {
     const message = gameState.messages[i];
     message.update();
     message.draw();
-    if (message.lifeSpan > 50) {
-      gameState.messages.splice(i, 1);
-      if (i > 0) i--;
-    }
+    if (message.lifeSpan > 50) i = TD.base.splice(gameState.messages, i, 1);
   }
 }
 
