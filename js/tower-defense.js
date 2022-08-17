@@ -103,15 +103,19 @@ canvas.addEventListener("mouseup", () => {
 });
 
 canvas.addEventListener("click", () => {
-  const gridX = mouse.x - (mouse.x % board.cell.size) + board.cell.gap;
-  const gridY = mouse.y - (mouse.y % board.cell.size) + board.cell.gap;
-  if (gridY < board.cell.size) return;
-  if (player.units.some((def) => def.x === gridX && def.y === gridY)) return;
+  const pos = {
+    x: mouse.x - (mouse.x % board.cell.size) + board.cell.gap,
+    y: mouse.y - (mouse.y % board.cell.size) + board.cell.gap,
+  };
+  if (pos.y < board.cell.size) return;
+  if (player.units.some((def) => def.x === pos.x && def.y === pos.y)) return;
+
   const selected = playable.units.player[player.selectedUnit];
   const { sprite, health, cost, power } = selected;
+
   if (cost <= player.resources) {
     player.units.push(
-      new TD.units.Defender(sprite, cost, health, power, gridX, gridY)
+      new TD.units.Defender(sprite, { ...pos }, { cost, health, power })
     );
     player.resources -= cost;
   } else {

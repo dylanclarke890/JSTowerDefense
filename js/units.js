@@ -2,6 +2,17 @@ var TD = TD || {};
 TD.units = TD.units || {};
 
 TD.units.BaseUnit = class extends TD.base.BaseCanvasModel {
+  // constructor(sprite, dimensions, stats) {
+  //   this.sprite = sprite;
+  //   const { x, y, width, height } = dimensions;
+  //   super(x, y, width, height);
+  //   const { health, power } = stats;
+  //   this.health = health;
+  //   this.maxHealth = health;
+  //   this.power = power;
+  //   this.frameX = 0;
+  //   this.frameY = 0;
+  // }
   constructor(sprite, health, power, width, height, xPosition, yPosition) {
     super(xPosition, yPosition, width, height);
     this.frameX = 0;
@@ -31,7 +42,7 @@ TD.units.BaseUnit = class extends TD.base.BaseCanvasModel {
     ctx.drawImage(
       this.sprite.image,
       this.frameX * this.sprite.width,
-      0,
+      0, // update to use sprite height and frameY.
       this.sprite.width,
       this.sprite.height,
       this.x,
@@ -47,10 +58,13 @@ TD.units.BaseUnit = class extends TD.base.BaseCanvasModel {
  */
 
 TD.units.Defender = class extends TD.units.BaseUnit {
-  constructor(sprite, cost, health, power, xPosition, yPosition) {
-    const width = board.cell.size - board.cell.gap * 2;
-    const height = board.cell.size - board.cell.gap * 2;
-    super(sprite, health, power, width, height, xPosition, yPosition);
+  constructor(sprite, dimensions, stats) {
+    const cellSize = board.cell.size - board.cell.gap * 2;
+    let { x, y, width, height } = dimensions || {};
+    width ??= cellSize;
+    height ??= cellSize;
+    const { cost, health, power } = stats;
+    super(sprite, health, power, width, height, x, y);
     this.cost = cost;
     this.shooting = false;
     this.shootNow = false;
