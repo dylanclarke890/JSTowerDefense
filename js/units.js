@@ -3,8 +3,7 @@ TD.units = TD.units || {};
 
 TD.units.BaseUnit = class extends TD.base.BaseCanvasModel {
   constructor(sprite, dimensions, stats) {
-    const { x, y, width, height } = dimensions;
-    super(x, y, width, height);
+    super(dimensions);
     this.sprite = sprite;
     const { health, power } = stats;
     this.health = health;

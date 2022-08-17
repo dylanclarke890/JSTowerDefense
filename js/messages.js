@@ -3,7 +3,7 @@ TD.messages = TD.messages || {};
 
 TD.messages.Base = class extends TD.base.BaseCanvasModel {
   constructor(message, x, y, fontSize, fontColor) {
-    super(x, y, null, null); // no width or height but keeps class consistent with others
+    super({x, y}); // no width or height but keeps class consistent with others
     this.message = message;
     this.fontSize = fontSize;
     this.fontColor = fontColor;

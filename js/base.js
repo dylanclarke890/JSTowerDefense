@@ -13,7 +13,8 @@ TD.base.Sprite = class {
 };
 
 TD.base.BaseCanvasModel = class {
-  constructor(x, y, width, height) {
+  constructor(dimensions) {
+    const { x, y, width, height } = dimensions;
     this.x = x;
     this.y = y;
     this.width = width;
@@ -31,7 +32,8 @@ TD.base.BaseCanvasModel = class {
 
 TD.base.Cell = class extends TD.base.BaseCanvasModel {
   constructor(x, y) {
-    super(x, y, board.cell.size, board.cell.size);
+    const size = board.cell.size;
+    super({ x, y, width: size, height: size });
   }
 
   draw() {

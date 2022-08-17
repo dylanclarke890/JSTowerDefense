@@ -3,7 +3,7 @@ TD.projectiles = TD.projectiles || {};
 
 TD.projectiles.Base = class extends TD.base.BaseCanvasModel {
   constructor(x, y, width, height, power, speed) {
-    super(x, y, width, height);
+    super({ x, y, width, height });
     this.power = power;
     this.speed = speed;
   }
