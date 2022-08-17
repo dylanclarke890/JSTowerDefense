@@ -46,11 +46,11 @@ TD.units.BaseUnit = class extends TD.base.BaseCanvasModel {
  */
 
 TD.units.Defender = class extends TD.units.BaseUnit {
-  constructor(x, y) {
+  constructor(x, y, sprite, health, cost) {
     const width = board.cell.size - board.cell.gap * 2;
     const height = board.cell.size - board.cell.gap * 2;
-    const sprite = playable.units.player[player.selectedUnit];
-    super(x, y, width, height, 100, sprite);
+    super(x, y, width, height, health, sprite);
+    this.cost = cost;
     this.shooting = false;
     this.shootNow = false;
     this.timer = 0;

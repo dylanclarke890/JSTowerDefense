@@ -33,7 +33,10 @@ const zombie = new TD.base.Sprite("sprites/zombie.png", 290, 420, 0, 7);
 
 const playable = {
   units: {
-    player: [plant, plantCopy],
+    player: [
+      { name: "", cost: 20, health: 40, sprite: plant },
+      { name: "", cost: 100, health: 100, sprite: plantCopy },
+    ],
     enemy: [zombie],
   },
   resources: {
@@ -99,10 +102,13 @@ canvas.addEventListener("click", () => {
   const gridY = mouse.y - (mouse.y % board.cell.size) + board.cell.gap;
   if (gridY < board.cell.size) return;
   if (player.units.some((def) => def.x === gridX && def.y === gridY)) return;
-  let defenderCost = 100;
-  if (defenderCost <= player.resources) {
-    player.units.push(new TD.units.Defender(gridX, gridY));
-    player.resources -= defenderCost;
+  const selected = playable.units.player[player.selectedUnit];
+  const { sprite, health, cost } = selected;
+  if (cost <= player.resources) {
+    player.units.push(
+      new TD.units.Defender(gridX, gridY, sprite, health, cost)
+    );
+    player.resources -= cost;
   } else {
     gameState.messages.push(
       new TD.messages.Floating("Missing resources", mouse.x, mouse.y, 20, "red")
@@ -148,7 +154,7 @@ function createUnitSelector() {
   let currentX = 7;
   let currentY = 7;
   const { width, height, gap } = actionBar.icons;
-  playable.units.player.forEach((pu, i) => {
+  playable.units.player.forEach((unit, i) => {
     ctx.fillRect(currentX, currentY, width, height);
     if (
       mouse.clicked &&
@@ -167,12 +173,13 @@ function createUnitSelector() {
     ctx.strokeRect(currentX, currentY, width, height);
     currentX += 10;
     currentY += gap;
+    const sprite = unit.sprite;
     ctx.drawImage(
-      pu.image,
+      sprite.image,
       0,
       0,
-      pu.width,
-      pu.height,
+      sprite.width,
+      sprite.height,
       currentX,
       currentY,
       50,
