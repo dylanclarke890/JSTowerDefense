@@ -125,7 +125,6 @@ window.addEventListener("resize", () => {
       board.grid.push(new TD.base.Cell(x, y));
 })();
 
-// TODO: could cache the grid until forced to reset?
 function handleGameGrid() {
   for (let i = 0; i < board.grid.length; i++) board.grid[i].draw();
 }

@@ -62,5 +62,5 @@ TD.base.new2dCanvas = function (id, width, height) {
 TD.base.splice = function (arr, start, deleteCount) {
   arr.splice(start, deleteCount);
   if (start - deleteCount <= 0) return 0;
-  return i - deleteCount;
+  return start - deleteCount;
 };
