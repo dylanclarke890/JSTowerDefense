@@ -141,7 +141,7 @@ function handleDefenders() {
         unit.health -= 0.5;
         enemyUnit.movement = 0;
       }
-      if (unit && unit.health <= 0) {
+      if (unit.health <= 0) {
         i = TD.base.splice(player.units, i, 1);
         enemyUnit.movement = enemyUnit.speed;
       }
