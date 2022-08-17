@@ -108,7 +108,8 @@ canvas.addEventListener("click", () => {
     y: mouse.y - (mouse.y % board.cell.size) + board.cell.gap,
   };
   if (gridPos.y < board.cell.size) return;
-  if (player.units.some((def) => def.x === gridPos.x && def.y === gridPos.y)) return;
+  if (player.units.some((def) => def.x === gridPos.x && def.y === gridPos.y))
+    return;
 
   const selected = playable.units.player[player.selectedUnit];
   const { sprite, cost, ...stats } = selected;
@@ -120,7 +121,11 @@ canvas.addEventListener("click", () => {
     player.resources -= cost;
   } else {
     gameState.messages.push(
-      new TD.messages.Floating("Missing resources", mouse.x, mouse.y, 20, "red")
+      new TD.messages.Floating(
+        "Missing resources",
+        { x: mouse.x, y: mouse.y },
+        { size: 20, color: "red" }
+      )
     );
   }
 });
@@ -222,14 +227,16 @@ function handleResources() {
       gameState.messages.push(
         new TD.messages.Floating(
           `+${pickup.amount}`,
-          pickup.x,
-          pickup.y,
-          30,
-          "black"
+          { x: pickup.x, y: pickup.y },
+          { size: 30, color: "black" }
         )
       );
       gameState.messages.push(
-        new TD.messages.Floating(`+${pickup.amount}`, 250, 50, 30, "gold")
+        new TD.messages.Floating(
+          `+${pickup.amount}`,
+          { x: 250, y: 50 },
+          { size: 30, color: "gold" }
+        )
       );
       i = TD.base.splice(gameState.pickups, i, 1);
     }
@@ -264,15 +271,17 @@ function handleEnemies() {
     if (unit.health <= 0) {
       const resourcesGained = unit.maxHealth / 10;
       gameState.messages.push(
-        new TD.messages.Floating(`+${resourcesGained}`, 250, 50, 30, "gold")
+        new TD.messages.Floating(
+          `+${resourcesGained}`,
+          { x: 250, y: 50 },
+          { size: 30, color: "gold" }
+        )
       );
       gameState.messages.push(
         new TD.messages.Floating(
           `+${resourcesGained}`,
-          unit.x,
-          unit.y,
-          30,
-          "black"
+          { x: unit.x, y: unit.y },
+          { size: 30, color: "black" }
         )
       );
       player.resources += resourcesGained;

@@ -13,8 +13,8 @@ TD.messages.Base = class extends TD.base.BaseCanvasModel {
 };
 
 TD.messages.Floating = class extends TD.messages.Base {
-  constructor(message, x, y, size, color) {
-    super(message, { x, y }, { size, color });
+  constructor(message, position, font) {
+    super(message, position, font);
     this.lifeSpan = 0;
     this.opacity = 1;
   }
