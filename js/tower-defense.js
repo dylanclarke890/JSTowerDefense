@@ -75,6 +75,11 @@ const actionBar = {
   },
 };
 
+const fps = {
+  current: 0,
+  times: [],
+};
+
 /***********************************************************
  *                  E V E N T S
  */
@@ -126,6 +131,14 @@ window.addEventListener("resize", () => {
 
 function handleGameGrid() {
   for (let i = 0; i < board.grid.length; i++) board.grid[i].draw();
+}
+
+function handleFps() {
+  const now = performance.now();
+  const times = fps.times;
+  while (times.length && times[0] <= now - 1000) times.shift();
+  times.push(now);
+  fps.current = times.length;
 }
 
 function handleDefenders() {
@@ -310,8 +323,12 @@ function handleFloatingMessages() {
 
 (function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  handleFps();
   ctx.fillStyle = "blue";
   ctx.fillRect(0, 0, actionBar.width, actionBar.height);
+  ctx.fillStyle = "gold";
+  ctx.font = "12px Arial";
+  ctx.fillText(`${fps.current} fps`, canvas.width - 40, 15);
   handleGameGrid();
   handleDefenders();
   handleResources();
