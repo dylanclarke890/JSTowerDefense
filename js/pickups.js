@@ -2,8 +2,8 @@ var TD = TD || {};
 TD.pickups = TD.pickups || {};
 
 TD.pickups.Base = class extends TD.base.BaseCanvasModel {
-  constructor(x, y, width, height) {
-    super({ x, y, width, height });
+  constructor(dimensions) {
+    super(dimensions);
   }
 };
 
