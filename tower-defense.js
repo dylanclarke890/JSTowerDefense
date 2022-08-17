@@ -114,7 +114,7 @@ window.addEventListener("resize", () => {
 });
 
 /***********************************************************
- *              U T I L I T I E S
+ *                     M A I N
  */
 
 (function createGameGrid() {
