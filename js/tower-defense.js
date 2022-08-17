@@ -5,6 +5,23 @@ const [canvas, ctx] = TD.base.new2dCanvas("play-area", 900, 600);
  *              G L O B A L  V A R I A B L E S
  */
 
+const plant = new TD.base.Sprite("sprites/plant.png", 167, 256, 0, 1);
+const plantCopy = new TD.base.Sprite("sprites/plant.png", 167, 256, 0, 1);
+const zombie = new TD.base.Sprite("sprites/zombie.png", 290, 420, 0, 7);
+
+const playable = {
+  units: {
+    player: [
+      { name: "", cost: 20, health: 40, power: 5, sprite: plant },
+      { name: "", cost: 100, health: 100, power: 12.5, sprite: plantCopy },
+    ],
+    enemy: [zombie],
+  },
+  resources: {
+    amounts: [20, 30, 40],
+  },
+};
+
 const player = {
   projectiles: [],
   resources: 300,
@@ -25,23 +42,6 @@ const gameState = {
   over: false,
   pickups: [],
   winningScore: 50,
-};
-
-const plant = new TD.base.Sprite("sprites/plant.png", 167, 256, 0, 1);
-const plantCopy = new TD.base.Sprite("sprites/plant.png", 167, 256, 0, 1);
-const zombie = new TD.base.Sprite("sprites/zombie.png", 290, 420, 0, 7);
-
-const playable = {
-  units: {
-    player: [
-      { name: "", cost: 20, health: 40, sprite: plant },
-      { name: "", cost: 100, health: 100, sprite: plantCopy },
-    ],
-    enemy: [zombie],
-  },
-  resources: {
-    amounts: [20, 30, 40],
-  },
 };
 
 const board = {
@@ -103,10 +103,10 @@ canvas.addEventListener("click", () => {
   if (gridY < board.cell.size) return;
   if (player.units.some((def) => def.x === gridX && def.y === gridY)) return;
   const selected = playable.units.player[player.selectedUnit];
-  const { sprite, health, cost } = selected;
+  const { sprite, health, cost, power } = selected;
   if (cost <= player.resources) {
     player.units.push(
-      new TD.units.Defender(sprite, cost, health, 100, gridX, gridY)
+      new TD.units.Defender(sprite, cost, health, power, gridX, gridY)
     );
     player.resources -= cost;
   } else {
