@@ -81,11 +81,7 @@ TD.units.Defender = class extends TD.units.BaseUnit {
  */
 
 TD.units.Enemy = class extends TD.units.BaseUnit {
-  constructor(health, power, yPosition) {
-    const sprite =
-      playable.units.enemy[
-        TD.utils.random.upTo(playable.units.enemy.length, true)
-      ];
+  constructor(sprite, health, power, yPosition) {
     const width = board.cell.size - board.cell.gap * 2;
     const height = board.cell.size - board.cell.gap * 2;
     super(sprite, health, power, width, height, canvas.width, yPosition);

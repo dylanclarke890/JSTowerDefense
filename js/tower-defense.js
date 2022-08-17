@@ -12,10 +12,10 @@ const zombie = new TD.base.Sprite("sprites/zombie.png", 290, 420, 0, 7);
 const playable = {
   units: {
     player: [
-      { name: "", cost: 20, health: 40, power: 5, sprite: plant },
-      { name: "", cost: 100, health: 100, power: 12.5, sprite: plantCopy },
+      { cost: 60, health: 40, power: 5, sprite: plant },
+      { cost: 100, health: 100, power: 20, sprite: plantCopy },
     ],
-    enemy: [zombie],
+    enemy: [{ health: 100, power: 0.5, sprite: zombie }],
   },
   resources: {
     amounts: [20, 30, 40],
@@ -281,7 +281,12 @@ function handleEnemies() {
     let yPosition =
       (TD.utils.random.upTo(5, true) + 1) * board.cell.size + board.cell.gap;
     enemy.positions.push(yPosition);
-    enemy.units.push(new TD.units.Enemy(100, 100, yPosition));
+    const selected =
+      playable.units.enemy[
+        TD.utils.random.upTo(playable.units.enemy.length, true)
+      ];
+    const { sprite, health, power } = selected;
+    enemy.units.push(new TD.units.Enemy(sprite, health, power, yPosition));
     if (enemy.frequency > 100) enemy.frequency -= 25;
   }
 }
