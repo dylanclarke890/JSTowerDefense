@@ -153,7 +153,7 @@ function handleDefenders() {
     for (let j = 0; j < enemy.units.length; j++) {
       const enemyUnit = enemy.units[j];
       if (TD.utils.isColliding(unit, enemyUnit)) {
-        unit.health -= 0.5;
+        unit.health -= enemyUnit.power;
         enemyUnit.movement = 0;
       }
       if (unit.health <= 0) {
