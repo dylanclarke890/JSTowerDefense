@@ -155,18 +155,20 @@ function handleFps() {
 
 function handleDefenders() {
   for (let i = 0; i < player.units.length; i++) {
-    const unit = player.units[i];
-    unit.update();
-    unit.draw();
-    unit.shooting = enemy.positions.indexOf(unit.y) !== -1; // there is an enemy in the same row.
+    if (i < 0) continue;
+    player.units[i].update();
+    player.units[i].draw();
+    player.units[i].shooting =
+      enemy.positions.indexOf(player.units[i].y) !== -1; // there is an enemy in the same row.
     for (let j = 0; j < enemy.units.length; j++) {
+      if (i < 0 || j < 0) continue;
       const enemyUnit = enemy.units[j];
-      if (TD.utils.isColliding(unit, enemyUnit)) {
-        unit.health -= enemyUnit.power;
+      if (TD.utils.isColliding(player.units[i], enemyUnit)) {
+        player.units[i].health -= enemyUnit.power;
         enemyUnit.movement = 0;
       }
-      if (unit.health <= 0) {
-        i = TD.base.splice(player.units, i, 1);
+      if (player.units[i].health <= 0) {
+        player.units.splice(i--, 1);
         enemyUnit.movement = enemyUnit.speed;
       }
     }

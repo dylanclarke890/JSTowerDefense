@@ -1,5 +1,6 @@
 var TD = TD || {};
 TD.base = TD.base || {};
+var ID_COUNT = 0;
 
 TD.base.Sprite = class {
   constructor(src, width, height, minFrame, maxFrame) {
@@ -14,6 +15,7 @@ TD.base.Sprite = class {
 
 TD.base.BaseCanvasModel = class {
   constructor(dimensions) {
+    this.id = ++ID_COUNT;
     const { x, y, width, height } = dimensions;
     this.x = x;
     this.y = y;
