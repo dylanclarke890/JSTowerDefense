@@ -286,10 +286,10 @@ function handleEnemies() {
     enemy.units[i].draw();
     if (enemy.units[i].x < 0) gameState.over = true;
     if (enemy.units[i].health <= 0) {
-      const resourcesGained = enemy.units[i].maxHealth / 10;
+      const rssGained = TD.utils.getRssGained(enemy.units[i]);
       gameState.messages.push(
         new TD.messages.Floating(
-          `+${resourcesGained}`,
+          `+${rssGained}`,
           { x: 250, y: 50 },
           { size: 30, color: "gold" }
         )
@@ -297,13 +297,13 @@ function handleEnemies() {
       const { x, y } = enemy.units[i];
       gameState.messages.push(
         new TD.messages.Floating(
-          `+${resourcesGained}`,
+          `+${rssGained}`,
           { x, y },
           { size: 30, color: "black" }
         )
       );
-      player.resources += resourcesGained;
-      player.score += resourcesGained;
+      player.resources += rssGained;
+      player.score += rssGained;
       enemy.positions.splice(enemy.positions.indexOf(enemy.units[i].y), 1);
       enemy.units.splice(i--, 1);
     }
@@ -312,17 +312,15 @@ function handleEnemies() {
     TD.utils.isIntervalOf(enemy.freq.current) &&
     player.score < gameState.winningScore
   ) {
-    const yPosition =
+    const y =
       (TD.utils.random.upTo(5, true) + 1) * board.cell.size + board.cell.gap;
-    enemy.positions.push(yPosition);
+    enemy.positions.push(y);
     const selected =
       playable.units.enemy[
         TD.utils.random.upTo(playable.units.enemy.length, true)
       ];
     const { sprite, ...stats } = selected;
-    enemy.units.push(
-      new TD.units.Enemy(sprite, { y: yPosition }, { ...stats })
-    );
+    enemy.units.push(new TD.units.Enemy(sprite, { y }, { ...stats }));
     const { current, lowest, decrementBy } = enemy.freq;
     if (current > lowest) enemy.freq.current -= decrementBy;
   }

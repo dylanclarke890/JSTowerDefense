@@ -52,3 +52,7 @@ TD.utils.new2dCanvas = function (id, width, height) {
 TD.utils.isIntervalOf = function (interval) {
   return gameState.frame % interval === 0;
 }
+
+TD.utils.getRssGained = function (unit) {
+  return unit.maxHealth / 10;
+};
