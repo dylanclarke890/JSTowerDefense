@@ -266,12 +266,12 @@ function handleProjectiles() {
 
 function handleEnemies() {
   for (let i = 0; i < enemy.units.length; i++) {
-    const unit = enemy.units[i];
-    unit.update();
-    unit.draw();
-    if (unit.x < 0) gameState.over = true;
-    if (unit.health <= 0) {
-      const resourcesGained = unit.maxHealth / 10;
+    if (i < 0) continue;
+    enemy.units[i].update();
+    enemy.units[i].draw();
+    if (enemy.units[i].x < 0) gameState.over = true;
+    if (enemy.units[i].health <= 0) {
+      const resourcesGained = enemy.units[i].maxHealth / 10;
       gameState.messages.push(
         new TD.messages.Floating(
           `+${resourcesGained}`,
@@ -279,17 +279,18 @@ function handleEnemies() {
           { size: 30, color: "gold" }
         )
       );
+      const { x, y } = enemy.units[i];
       gameState.messages.push(
         new TD.messages.Floating(
           `+${resourcesGained}`,
-          { x: unit.x, y: unit.y },
+          { x, y },
           { size: 30, color: "black" }
         )
       );
       player.resources += resourcesGained;
       player.score += resourcesGained;
-      i = TD.base.splice(enemy.units, i, 1);
-      TD.base.splice(enemy.positions, enemy.positions.indexOf(unit.y), 1);
+      enemy.units.splice(i, 1);
+      enemy.positions.splice(enemy.positions.indexOf(enemy.units[i].y), 1);
     }
   }
   if (
