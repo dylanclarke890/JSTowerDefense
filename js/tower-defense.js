@@ -1,5 +1,5 @@
 var TD = TD || {};
-const [canvas, ctx] = TD.base.new2dCanvas("play-area", 900, 600);
+const [canvas, ctx] = TD.utils.new2dCanvas("play-area", 900, 600);
 
 /***********************************************************
  *              G L O B A L  V A R I A B L E S
@@ -222,25 +222,30 @@ function handleResources() {
     gameState.pickups.push(new TD.pickups.Resource());
   }
   for (let i = 0; i < gameState.pickups.length; i++) {
-    const pickup = gameState.pickups[i];
-    pickup.draw();
-    if (mouse.x && mouse.y && TD.utils.isColliding(pickup, mouse)) {
-      player.resources += pickup.amount;
+    if (i < 0) continue;
+    gameState.pickups[i].draw();
+    if (
+      mouse.x &&
+      mouse.y &&
+      TD.utils.isColliding(gameState.pickups[i], mouse)
+    ) {
+      const { x, y, amount } = gameState.pickups[i];
+      player.resources += amount;
       gameState.messages.push(
         new TD.messages.Floating(
-          `+${pickup.amount}`,
-          { x: pickup.x, y: pickup.y },
+          `+${amount}`,
+          { x, y },
           { size: 30, color: "black" }
         )
       );
       gameState.messages.push(
         new TD.messages.Floating(
-          `+${pickup.amount}`,
+          `+${amount}`,
           { x: 250, y: 50 },
           { size: 30, color: "gold" }
         )
       );
-      i = TD.base.splice(gameState.pickups, i, 1);
+      gameState.pickups.splice(gameState.pickups, i--, 1);
     }
   }
 }
