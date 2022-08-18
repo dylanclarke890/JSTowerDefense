@@ -16,6 +16,7 @@ TD.messages.Floating = class extends TD.messages.Base {
   constructor(message, position, font) {
     super(message, position, font);
     this.lifeSpan = 0;
+    this.maxLifeSpan = 50;
     this.opacity = 1;
   }
 

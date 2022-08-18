@@ -349,8 +349,8 @@ function handleFloatingMessages() {
   for (let i = 0; i < gameState.messages.length; i++) {
     gameState.messages[i].update();
     gameState.messages[i].draw();
-    if (gameState.messages[i].lifeSpan > 50)
-      i = gameState.messages.splice(i--, 1);
+    const { lifeSpan, maxLifeSpan } = gameState.messages[i];
+    if (lifeSpan > maxLifeSpan) i = gameState.messages.splice(i--, 1);
   }
 }
 
