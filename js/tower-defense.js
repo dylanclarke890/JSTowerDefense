@@ -222,7 +222,6 @@ function handleResources() {
     gameState.pickups.push(new TD.pickups.Resource());
   }
   for (let i = 0; i < gameState.pickups.length; i++) {
-    console.log(gameState.pickups[i]);
     if (i < 0) continue;
     gameState.pickups[i].draw();
     if (
