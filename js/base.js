@@ -45,7 +45,3 @@ TD.base.Cell = class extends TD.base.BaseCanvasModel {
     }
   }
 };
-
-
-
-

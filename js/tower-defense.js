@@ -222,6 +222,7 @@ function handleResources() {
     gameState.pickups.push(new TD.pickups.Resource());
   }
   for (let i = 0; i < gameState.pickups.length; i++) {
+    console.log(gameState.pickups[i]);
     if (i < 0) continue;
     gameState.pickups[i].draw();
     if (
@@ -245,7 +246,7 @@ function handleResources() {
           { size: 30, color: "gold" }
         )
       );
-      gameState.pickups.splice(gameState.pickups, i--, 1);
+      gameState.pickups.splice(i--, 1);
     }
   }
 }
@@ -338,10 +339,10 @@ function handleGameStatus() {
 
 function handleFloatingMessages() {
   for (let i = 0; i < gameState.messages.length; i++) {
-    const message = gameState.messages[i];
-    message.update();
-    message.draw();
-    if (message.lifeSpan > 50) i = TD.base.splice(gameState.messages, i, 1);
+    gameState.messages[i].update();
+    gameState.messages[i].draw();
+    if (gameState.messages[i].lifeSpan > 50)
+      i = gameState.messages.splice(i--, 1);
   }
 }
 
