@@ -45,3 +45,10 @@ TD.utils.new2dCanvas = function (id, width, height) {
   canvas.height = height;
   return [canvas, ctx];
 };
+
+/**
+ * Check whether the current frame is a multiple of `interval`. 
+ */
+TD.utils.isIntervalOf = function (interval) {
+  return gameState.frame % interval === 0;
+}

@@ -220,11 +220,10 @@ function createUnitSelector() {
 
 function handleResources() {
   if (
-    gameState.frame % playable.resources.frequency === 0 &&
+    TD.utils.isIntervalOf(player.resources.frequency) &&
     player.score < gameState.winningScore
   ) {
     const newRss = new TD.pickups.Resource();
-    console.log(`CREATED AT: ${newRss.x}, ${newRss.y}`);
     gameState.pickups.push(newRss);
   }
   for (let i = 0; i < gameState.pickups.length; i++) {
@@ -305,7 +304,7 @@ function handleEnemies() {
     }
   }
   if (
-    gameState.frame % enemy.frequency === 0 &&
+    TD.utils.isIntervalOf(enemy.frequency) &&
     player.score < gameState.winningScore
   ) {
     const yPosition =

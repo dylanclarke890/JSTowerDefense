@@ -62,7 +62,7 @@ TD.units.Defender = class extends TD.units.BaseUnit {
   }
 
   update() {
-    if (gameState.frame % 16 === 0) {
+    if (TD.utils.isIntervalOf(16)) {
       this.nextSpriteFrame();
       if (this.frameX === 1) this.shootNow = true;
     }
@@ -101,7 +101,7 @@ TD.units.Enemy = class extends TD.units.BaseUnit {
 
   update() {
     this.x -= this.movement;
-    if (gameState.frame % 2 === 0) {
+    if (TD.utils.isIntervalOf(2)) {
       this.nextSpriteFrame();
     }
   }
