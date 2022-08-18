@@ -247,20 +247,20 @@ function handleResources() {
 
 function handleProjectiles() {
   for (let i = 0; i < player.projectiles.length; i++) {
-    const projectile = player.projectiles[i];
-    projectile.update();
-    projectile.draw();
+    if (i < 0) continue;
+    player.projectiles[i].update();
+    player.projectiles[i].draw();
 
     for (let j = 0; j < enemy.units.length; j++) {
       const enemyUnit = enemy.units[j];
-      if (TD.utils.isColliding(projectile, enemyUnit)) {
-        enemyUnit.health -= projectile.power;
-        i = TD.base.splice(player.projectiles, i, 1);
+      if (TD.utils.isColliding(player.projectiles[i], enemyUnit)) {
+        enemyUnit.health -= player.projectiles[i].power;
+        player.projectiles.splice(i--, 1);
       }
     }
-
-    if (projectile.x > canvas.width)
-      i = TD.base.splice(player.projectiles, i, 1);
+    if (i < 0) continue;
+    if (player.projectiles[i].x > canvas.width)
+      player.projectiles.splice(i--, 1);
   }
 }
 
@@ -289,8 +289,8 @@ function handleEnemies() {
       );
       player.resources += resourcesGained;
       player.score += resourcesGained;
-      enemy.units.splice(i, 1);
       enemy.positions.splice(enemy.positions.indexOf(enemy.units[i].y), 1);
+      enemy.units.splice(i--, 1);
     }
   }
   if (
