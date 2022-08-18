@@ -11,7 +11,7 @@ TD.pickups.Resource = class extends TD.pickups.Base {
   constructor() {
     const size = board.cell.size;
     const x = TD.utils.random.upTo(canvas.width - size),
-      y = (TD.utils.random.upTo(5, true) + 1) * (size + 25),
+      y = (TD.utils.random.upTo(5, true) + 1) * size,
       width = size * 0.6,
       height = size * 0.6;
     super({ x, y, width, height });

@@ -18,6 +18,7 @@ const playable = {
     enemy: [{ health: 100, power: 0.5, sprite: zombie }],
   },
   resources: {
+    frequency: 50,
     amounts: [20, 30, 40],
   },
 };
@@ -218,8 +219,13 @@ function createUnitSelector() {
 }
 
 function handleResources() {
-  if (gameState.frame % 500 === 0 && player.score < gameState.winningScore) {
-    gameState.pickups.push(new TD.pickups.Resource());
+  if (
+    gameState.frame % playable.resources.frequency === 0 &&
+    player.score < gameState.winningScore
+  ) {
+    const newRss = new TD.pickups.Resource();
+    console.log(`CREATED AT: ${newRss.x}, ${newRss.y}`);
+    gameState.pickups.push(newRss);
   }
   for (let i = 0; i < gameState.pickups.length; i++) {
     if (i < 0) continue;
