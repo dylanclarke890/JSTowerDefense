@@ -32,7 +32,12 @@ const player = {
 };
 
 const enemy = {
-  frequency: 600, // how often in frames to spawn a new enemy.
+  freq: {
+    // how regularly in frames to spawn a new enemy.
+    current: 600,
+    lowest: 100,
+    decrementBy: 25,
+  },
   positions: [],
   units: [],
 };
@@ -304,7 +309,7 @@ function handleEnemies() {
     }
   }
   if (
-    TD.utils.isIntervalOf(enemy.frequency) &&
+    TD.utils.isIntervalOf(enemy.freq.current) &&
     player.score < gameState.winningScore
   ) {
     const yPosition =
@@ -318,7 +323,8 @@ function handleEnemies() {
     enemy.units.push(
       new TD.units.Enemy(sprite, { y: yPosition }, { ...stats })
     );
-    if (enemy.frequency > 100) enemy.frequency -= 25;
+    const { current, lowest, decrementBy } = enemy.freq;
+    if (current > lowest) enemy.freq.current -= decrementBy;
   }
 }
 
