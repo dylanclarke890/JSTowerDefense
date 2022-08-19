@@ -7,12 +7,12 @@ const [canvas, ctx] = TD.utils.new2dCanvas("play-area", 900, 600);
 
 const plant = new TD.base.Sprite(
   "sprites/plant.png",
-  { width: 167, height: 256 },
+  { width: 167, height: 256, projectileOffset: { x: 70, y: 40 } },
   { min: 0, max: 1, attack: 1 }
 );
 const plantCopy = new TD.base.Sprite(
   "sprites/plant.png",
-  { width: 167, height: 256 },
+  { width: 167, height: 256, projectileOffset: { x: 70, y: 40 } },
   { min: 0, max: 1, attack: 1 }
 );
 const zombie = new TD.base.Sprite(

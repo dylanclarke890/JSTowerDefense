@@ -6,9 +6,10 @@ TD.base.Sprite = class {
   constructor(src, dimensions, frames) {
     this.image = new Image();
     this.image.src = src;
-    const { width, height } = dimensions;
+    const { width, height, projectileOffset } = dimensions;
     this.width = width;
     this.height = height;
+    this.projectileOffset = projectileOffset;
     this.frames = frames;
   }
 };
