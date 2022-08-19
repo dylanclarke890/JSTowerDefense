@@ -62,9 +62,10 @@ TD.units.Defender = class extends TD.units.BaseUnit {
   }
 
   update() {
-    if (TD.utils.isIntervalOf(16)) {
+    const { attack, transitionInterval } = this.sprite.frames;
+    if (TD.utils.isIntervalOf(transitionInterval)) {
       this.nextSpriteFrame();
-      if (this.frameX === this.sprite.frames.attack) this.shootNow = true;
+      if (this.frameX === attack) this.shootNow = true;
     }
     if (this.shooting && this.shootNow) {
       const offset = this.sprite.projectileOffset;
@@ -94,15 +95,15 @@ TD.units.Enemy = class extends TD.units.BaseUnit {
     width ??= cellSize;
     height ??= cellSize;
     x ??= canvas.width;
-    let { ...otherStats } = stats;
+    let { speed, ...otherStats } = stats;
     super(sprite, { width, height, x, ...otherDimensions }, { ...otherStats });
-    this.baseSpeed = TD.utils.random.upTo(0.8) + 0.4;
-    this.speed = this.baseSpeed;
+    this.speed = speed;
+    this.baseSpeed = this.speed;
   }
 
   update() {
     this.x -= this.speed;
-    if (TD.utils.isIntervalOf(2)) {
+    if (TD.utils.isIntervalOf(this.sprite.frames.transitionInterval)) {
       this.nextSpriteFrame();
     }
   }

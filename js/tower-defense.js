@@ -8,17 +8,17 @@ const [canvas, ctx] = TD.utils.new2dCanvas("play-area", 900, 600);
 const plant = new TD.base.Sprite(
   "sprites/plant.png",
   { width: 167, height: 256, projectileOffset: { x: 70, y: 40 } },
-  { min: 0, max: 1, attack: 1 }
+  { min: 0, max: 1, attack: 1, transitionInterval: 16 }
 );
 const plantCopy = new TD.base.Sprite(
   "sprites/plant.png",
   { width: 167, height: 256, projectileOffset: { x: 70, y: 40 } },
-  { min: 0, max: 1, attack: 1 }
+  { min: 0, max: 1, attack: 1, transitionInterval: 16 }
 );
 const zombie = new TD.base.Sprite(
   "sprites/zombie.png",
   { width: 290, height: 420 },
-  { min: 0, max: 4, attack: 7 }
+  { min: 0, max: 4, attack: 7, transitionInterval: 4 }
 );
 
 const playable = {
@@ -27,7 +27,14 @@ const playable = {
       { cost: 60, health: 40, power: 5, sprite: plant },
       { cost: 100, health: 100, power: 20, sprite: plantCopy },
     ],
-    enemy: [{ health: 100, power: 0.5, sprite: zombie }],
+    enemy: [
+      {
+        health: 100,
+        power: 0.5,
+        sprite: zombie,
+        speed: TD.utils.random.upTo(0.8) + 0.4,
+      },
+    ],
   },
   resources: {
     frequency: 50,
