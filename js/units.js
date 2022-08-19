@@ -32,7 +32,7 @@ TD.units.BaseUnit = class extends TD.base.BaseCanvasModel {
     ctx.drawImage(
       this.sprite.image,
       this.frameX * this.sprite.width,
-      0, // update to use sprite height and frameY.
+      this.frameY * this.sprite.height,
       this.sprite.width,
       this.sprite.height,
       this.x,
