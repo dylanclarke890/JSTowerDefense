@@ -54,5 +54,5 @@ TD.utils.isIntervalOf = function (interval) {
 }
 
 TD.utils.getRssGained = function (unit) {
-  return unit.maxHealth / 10;
+  return unit.baseHealth / 10;
 };

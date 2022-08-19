@@ -7,7 +7,7 @@ TD.units.BaseUnit = class extends TD.base.BaseCanvasModel {
     this.sprite = sprite;
     const { health, power } = stats;
     this.health = health;
-    this.maxHealth = health;
+    this.baseHealth = health;
     this.power = power;
     this.frameX = 0;
     this.frameY = 0;
@@ -96,12 +96,12 @@ TD.units.Enemy = class extends TD.units.BaseUnit {
     x ??= canvas.width;
     let { ...otherStats } = stats;
     super(sprite, { width, height, x, ...otherDimensions }, { ...otherStats });
-    this.speed = TD.utils.random.upTo(0.8) + 0.4;
-    this.movement = this.speed;
+    this.baseSpeed = TD.utils.random.upTo(0.8) + 0.4;
+    this.speed = this.baseSpeed;
   }
 
   update() {
-    this.x -= this.movement;
+    this.x -= this.speed;
     if (TD.utils.isIntervalOf(2)) {
       this.nextSpriteFrame();
     }
