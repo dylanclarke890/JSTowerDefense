@@ -244,7 +244,7 @@ function createUnitSelector() {
 
 function handleResources() {
   if (
-    TD.utils.isIntervalOf(player.resources.frequency) &&
+    TD.utils.isIntervalOf(playable.resources.frequency) &&
     player.score < gameState.winningScore
   ) {
     const newRss = new TD.pickups.Resource();
