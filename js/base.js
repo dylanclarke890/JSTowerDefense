@@ -3,13 +3,13 @@ TD.base = TD.base || {};
 var ID_COUNT = 0;
 
 TD.base.Sprite = class {
-  constructor(src, width, height, minFrame, maxFrame) {
+  constructor(src, dimensions, frames) {
     this.image = new Image();
     this.image.src = src;
+    const { width, height } = dimensions;
     this.width = width;
     this.height = height;
-    this.minFrame = minFrame;
-    this.maxFrame = maxFrame;
+    this.frames = frames;
   }
 };
 

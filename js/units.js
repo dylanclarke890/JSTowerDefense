@@ -18,8 +18,8 @@ TD.units.BaseUnit = class extends TD.base.BaseCanvasModel {
   }
 
   nextSpriteFrame() {
-    if (this.frameX < this.sprite.maxFrame) this.frameX++;
-    else this.frameX = this.sprite.minFrame;
+    if (this.frameX < this.sprite.frames.max) this.frameX++;
+    else this.frameX = this.sprite.frames.min;
   }
 
   drawHP(fillStyle, font, x, y) {
@@ -64,7 +64,7 @@ TD.units.Defender = class extends TD.units.BaseUnit {
   update() {
     if (TD.utils.isIntervalOf(16)) {
       this.nextSpriteFrame();
-      if (this.frameX === 1) this.shootNow = true;
+      if (this.frameX === this.sprite.frames.attack) this.shootNow = true;
     }
     if (this.shooting && this.shootNow) {
       const x = this.x + 70,

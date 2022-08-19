@@ -5,9 +5,21 @@ const [canvas, ctx] = TD.utils.new2dCanvas("play-area", 900, 600);
  *              G L O B A L  V A R I A B L E S
  */
 
-const plant = new TD.base.Sprite("sprites/plant.png", 167, 256, 0, 1);
-const plantCopy = new TD.base.Sprite("sprites/plant.png", 167, 256, 0, 1);
-const zombie = new TD.base.Sprite("sprites/zombie.png", 290, 420, 0, 7);
+const plant = new TD.base.Sprite(
+  "sprites/plant.png",
+  { width: 167, height: 256 },
+  { min: 0, max: 1, attack: 1 }
+);
+const plantCopy = new TD.base.Sprite(
+  "sprites/plant.png",
+  { width: 167, height: 256 },
+  { min: 0, max: 1, attack: 1 }
+);
+const zombie = new TD.base.Sprite(
+  "sprites/zombie.png",
+  { width: 290, height: 420 },
+  { min: 0, max: 4, attack: 7 }
+);
 
 const playable = {
   units: {
